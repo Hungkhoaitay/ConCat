@@ -1,10 +1,13 @@
 package com.example.myapplication;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -12,7 +15,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-public class WidgetMovement extends Activity implements View.OnTouchListener {
+import androidx.annotation.Nullable;
+
+public class WidgetMovement extends Service implements View.OnTouchListener {
     private int initialX;
     private int initialY;
     private float initialTouchX;
@@ -49,6 +54,28 @@ public class WidgetMovement extends Activity implements View.OnTouchListener {
 
     }
 
+    private static final int NORTH = 1;
+    private static final int WEST = 2;
+    private static final int SOUTH = 3;
+    private static final int EAST = 4;
+
+    private int checkRegion(int x, int y) {
+        float gradient = Math.abs(y/x);
+        if (gradient >= 1) {
+            if (y > 0) {
+                return NORTH;
+            } else {
+                return SOUTH;
+            }
+        } else {
+            if (x > 0) {
+                return EAST;
+            } else {
+                return WEST;
+            }
+        }
+    }
+
     /**
      * Specify movements of the widget on the home screen
      * @param v
@@ -57,14 +84,14 @@ public class WidgetMovement extends Activity implements View.OnTouchListener {
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
+        FloatingViewService floatingViewService = new FloatingViewService();
         Display display = mWindowManager.getDefaultDisplay();
 
-        // get the 4 maximum coordinate value of the phone screen
         float maxX = (float) 0.5 * display.getWidth();
         float minX = -maxX;
         float maxY = (float) 0.5 * display.getHeight();
         float minY = -maxY;
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 initialX = params.x;
@@ -75,8 +102,8 @@ public class WidgetMovement extends Activity implements View.OnTouchListener {
                 Log.i("", initialX + "" + initialY);
                 return true;
             case MotionEvent.ACTION_MOVE:
-                float xDiff = Math.round(event.getRawX() - initialTouchX);
-                float yDiff = Math.round(event.getRawY() - initialTouchY);
+                int xDiff = Math.round(event.getRawX() - initialTouchX);
+                int yDiff = Math.round(event.getRawY() - initialTouchY);
                 params.x = initialX + (int) xDiff;
                 params.y = initialY + (int) yDiff;
                 Log.i("", params.x + " and " + params.y);
@@ -91,8 +118,67 @@ public class WidgetMovement extends Activity implements View.OnTouchListener {
                     v.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            /*
                             collapsedView.setVisibility(View.GONE);
                             expandedView.setVisibility(View.VISIBLE);
+
+                             */
+                            params.x = 0;
+                            params.y = 0;
+                            mWindowManager.updateViewLayout(mOverlayView, params);
+                            v.setOnTouchListener(new View.OnTouchListener() {
+                                private int initialX;
+                                private int initialY;
+                                private float initialTouchX;
+                                private float initialTouchY;
+
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    switch (event.getAction()) {
+                                        case MotionEvent.ACTION_DOWN:
+                                            initialX = params.x;
+                                            initialY = params.y;
+                                            initialTouchX = event.getRawX();
+                                            initialTouchY = event.getRawY();
+                                            Log.i("", "Started action");
+                                            Log.i("", initialX + "" + initialY);
+                                            return true;
+                                        case MotionEvent.ACTION_MOVE:
+                                            int xDiff = Math.round(event.getRawX() - initialTouchX);
+                                            int yDiff = Math.round(event.getRawY() - initialTouchY);
+                                            params.x = initialX + (int) xDiff;
+                                            params.y = initialY + (int) yDiff;
+                                            Log.i("", params.x + " and " + params.y);
+                                            Log.i("", xDiff + " and " + yDiff);
+                                            mWindowManager.updateViewLayout(mOverlayView, params);
+                                            return true;
+                                        case MotionEvent.ACTION_UP:
+                                            float gradient = params.y / params.x;
+                                            switch (checkRegion(params.x, params.y)) {
+                                                case NORTH:
+                                                    Log.i("", "North");
+                                                    Toast.makeText(getApplicationContext(), "Launch app 1", Toast.LENGTH_SHORT).show();
+                                                    break;
+                                                case SOUTH:
+                                                    Log.i("", "South");
+                                                    Toast.makeText(getApplicationContext(), "Launch app 2", Toast.LENGTH_SHORT).show();
+                                                    break;
+                                                case EAST:
+                                                    Log.i("", "East");
+                                                    Toast.makeText(getApplicationContext(), "Launch app 3", Toast.LENGTH_SHORT).show();
+                                                    break;
+                                                case WEST:
+                                                    Log.i("", "West");
+                                                    Toast.makeText(getApplicationContext(), "Launch app 4", Toast.LENGTH_SHORT).show();
+                                                    break;
+                                            }
+                                            //stopSelf();
+                                            return true;
+                                        default:
+                                            return false;
+                                    }
+                                }
+                            });
                         }
                     });
                     v.performClick();
@@ -102,29 +188,14 @@ public class WidgetMovement extends Activity implements View.OnTouchListener {
                     Log.i("", "Button moved");
                     return true;
                 }
-        }
-        return false;
-    }
-
-    public void launchApp(ApplicationInfo appInfo) {
-        Intent intent = getPackageManager().getLaunchIntentForPackage(appInfo.packageName);
-        if (intent == null || appInfo == null) {
-            return;
-        }
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(getApplicationContext(), "Activity not found!", Toast.LENGTH_SHORT).show();
+            default:
+                return false;
         }
     }
 
-    public void launchApp(String appInfo) {
-        Intent intent = getPackageManager().getLaunchIntentForPackage(appInfo);
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(getApplicationContext(), "Activity not found!", Toast.LENGTH_SHORT).show();
-        }
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
-
 }
