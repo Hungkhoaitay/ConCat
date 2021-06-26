@@ -33,14 +33,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".FloatingLauncher"
-            android:launchMode="singleInstance"
-            android:taskAffinity=".tooleap">
-            <intent-filter>
-                <action android:name="com.tooleap.sdk.TOOLEAP_SHOW"/>
-            </intent-filter>
-        </activity>
-
 
         <activity
             android:name=".ScrollingActivity"

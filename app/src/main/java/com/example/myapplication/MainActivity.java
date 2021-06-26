@@ -83,17 +83,6 @@ import static android.content.ContentValues.TAG;
                 }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
                     startService(new Intent(MainActivity.this, FloatingViewService.class));
-                    /*
-                    Intent intent = new Intent(MainActivity.this, FloatingLauncher.class);
-                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                    TooleapPopOutMiniApp miniApp = new TooleapPopOutMiniApp(getApplicationContext(), intent);
-                    miniApp.contentTitle = "Sample mini app";
-                    miniApp.notificationText = "Hello!";
-                    miniApp.bubbleBackgroundColor = 0x78FFFFFF;
-
-                    startActivity(intent);
-
-                     */
                 } else {
                     askForSystemOverlayPermission();
                 }
