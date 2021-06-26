@@ -15,25 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
 
-        <service android:name="com.tooleap.sdk.TooleapAppService"/>
-        <service android:name="com.tooleap.sdk.TooleapUIService"
-            android:process=":UIService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.tooleap.sdk.BIND_UI_SERVICE" />
-            </intent-filter>
-        </service>
-        <receiver android:name="com.tooleap.sdk.TooleapReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.tooleap.sdk.TOOLEAP_ACTION"/>
-            </intent-filter>
-        </receiver>
-
-
         <activity
             android:name=".ScrollingActivity"
             android:label="replace"
