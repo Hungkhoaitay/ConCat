@@ -81,7 +81,11 @@ import static android.content.ContentValues.TAG;
                     askForSystemOverlayPermission();
                     break;
                 }
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
+                if (this.hashMapNames.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "At least an app must be chosen to launch ConCat!",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
                     Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
                     intent.putExtra("North", hashMapNames.get(buttonIDs[0]));
                     intent.putExtra("South", hashMapNames.get(buttonIDs[1]));
