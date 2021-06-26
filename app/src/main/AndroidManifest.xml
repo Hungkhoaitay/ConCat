@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -13,6 +15,33 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
 
+        <service android:name="com.tooleap.sdk.TooleapAppService"/>
+        <service android:name="com.tooleap.sdk.TooleapUIService"
+            android:process=":UIService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.tooleap.sdk.BIND_UI_SERVICE" />
+            </intent-filter>
+        </service>
+        <receiver android:name="com.tooleap.sdk.TooleapReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.tooleap.sdk.TOOLEAP_ACTION"/>
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".FloatingLauncher"
+            android:launchMode="singleInstance"
+            android:taskAffinity=".tooleap">
+            <intent-filter>
+                <action android:name="com.tooleap.sdk.TOOLEAP_SHOW"/>
+            </intent-filter>
+        </activity>
+
+
         <activity
             android:name=".ScrollingActivity"
             android:label="replace"
@@ -21,15 +50,18 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <service
             android:name=".FloatingViewService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
