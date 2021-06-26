@@ -90,7 +90,9 @@ public class FloatingViewService extends Service
     @Override
     public void onCreate() {
         super.onCreate();
+
         if (mFloatingView != null) {
+            Toast.makeText(getApplicationContext(), "Widget is already created", Toast.LENGTH_SHORT).show();
             return;
         }
 
