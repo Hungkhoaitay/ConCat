@@ -2,6 +2,10 @@ package com.example.myapplication;
 
 import android.app.Activity;
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
@@ -12,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -26,8 +31,12 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class FloatingViewService extends Service
@@ -53,8 +62,8 @@ public class FloatingViewService extends Service
     private View expandedView;
 
     private PackageManager packageManager;
+    HashMap<Integer, String> hashMapNames;
 
-    private int mWidth = 0;
 
     @Override
     public boolean onDrag(View v, DragEvent event) {
@@ -88,20 +97,26 @@ public class FloatingViewService extends Service
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
         if (mFloatingView != null) {
             Toast.makeText(getApplicationContext(), "Widget is already created", Toast.LENGTH_SHORT).show();
-            return;
+            return super.onStartCommand(intent, flags, startId);
         }
-
 
         this.packageManager = getApplicationContext().getPackageManager();
-        for (ApplicationInfo appInfo : packageManager.getInstalledApplications(0)) {
-            Log.i("", appInfo.packageName);
-        }
-        
+
+        this.hashMapNames = new HashMap<>();
+        String northApp = intent.getStringExtra("North");
+        this.hashMapNames.put(R.id.firstButton, northApp);
+        String southApp = intent.getStringExtra("South");
+        this.hashMapNames.put(R.id.secondButton, southApp);
+        String eastApp = intent.getStringExtra("East");
+        this.hashMapNames.put(R.id.thirdButton, eastApp);
+        String westApp = intent.getStringExtra("West");
+        this.hashMapNames.put(R.id.fourthButton, westApp);
+
+
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -197,28 +212,25 @@ public class FloatingViewService extends Service
                                                     Toast.makeText(getApplicationContext(), params.x + " " + params.y, Toast.LENGTH_SHORT).show();
                                                     switch (checkRegion(params.x, params.y)) {
                                                         case NORTH:
-                                                            Log.i("", "North");
-                                                            launchApp("com.android.settings");
+                                                            launchApp(northApp);
                                                             Log.i("", "App 1 launched");
                                                             Toast.makeText(getApplicationContext(), "Launch app 1", Toast.LENGTH_SHORT).show();
                                                             break;
                                                         case SOUTH:
-                                                            Log.i("", "South");
-                                                            launchApp("com.samsung.android.calendar");
+                                                            launchApp(southApp);
                                                             Toast.makeText(getApplicationContext(), "Launch app 2", Toast.LENGTH_SHORT).show();
                                                             break;
                                                         case EAST:
-                                                            Log.i("", "East");
-                                                            launchApp("com.sec.android.app.camera");
+                                                            launchApp(eastApp);
                                                             Toast.makeText(getApplicationContext(), "Launch app 3", Toast.LENGTH_SHORT).show();
                                                             break;
                                                         case WEST:
-                                                            Log.i("", "West");
-                                                            launchApp("com.sec.android.app.fm");
+                                                            launchApp(westApp);
                                                             Toast.makeText(getApplicationContext(), "Launch app 4", Toast.LENGTH_SHORT).show();
                                                             break;
                                                     }
                                                     stopSelf();
+                                                    createNotification();
                                                     return true;
                                                 default:
                                                     return false;
@@ -239,6 +251,12 @@ public class FloatingViewService extends Service
                 }
             }
         });
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
     }
 
     public void launchApp(String appInfo) {
@@ -285,6 +303,30 @@ public class FloatingViewService extends Service
                 break;
             default:
         }
+    }
+
+    public void createNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("Launch", "Launch", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+        Intent intent = new Intent(getApplicationContext(), FloatingViewService.class);
+        intent.putExtra("North", hashMapNames.get(R.id.firstButton));
+        Log.i("TAG", hashMapNames.get(R.id.firstButton));
+        intent.putExtra("South", hashMapNames.get(R.id.secondButton));
+        intent.putExtra("East", hashMapNames.get(R.id.thirdButton));
+        intent.putExtra("West", hashMapNames.get(R.id.fourthButton));
+
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Launch")
+                .setSmallIcon(R.drawable.concat)
+                .setContentTitle("To relaunch")
+                .setContentText("Click here to relaunch ConCat!")
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+        managerCompat.notify(12, builder.build());
     }
 
     public void onDestroy(){

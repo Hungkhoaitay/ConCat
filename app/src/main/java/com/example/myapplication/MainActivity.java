@@ -82,7 +82,12 @@ import static android.content.ContentValues.TAG;
                     break;
                 }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
-                    startService(new Intent(MainActivity.this, FloatingViewService.class));
+                    Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
+                    intent.putExtra("North", hashMapNames.get(buttonIDs[0]));
+                    intent.putExtra("South", hashMapNames.get(buttonIDs[1]));
+                    intent.putExtra("East", hashMapNames.get(buttonIDs[2]));
+                    intent.putExtra("West", hashMapNames.get(buttonIDs[3]));
+                    startService(intent);
                 } else {
                     askForSystemOverlayPermission();
                 }
@@ -103,6 +108,7 @@ import static android.content.ContentValues.TAG;
 
          for (int btnID: buttonIDs) {
              editor.putString(Integer.toString(btnID), hashMapNames.get(btnID));
+             Log.i("", hashMapNames.get(btnID));
          }
          editor.apply();
      }
