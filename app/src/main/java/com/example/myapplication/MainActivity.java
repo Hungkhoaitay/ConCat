@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tooleap.sdk.TooleapPopOutMiniApp;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -75,8 +77,17 @@ import static android.content.ContentValues.TAG;
                     askForSystemOverlayPermission();
                     break;
                 }
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
-                    startService(new Intent(MainActivity.this, FloatingViewService.class));
+                if (this.hashMapNames.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "At least an app must be chosen to launch ConCat!",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
+                    Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
+                    intent.putExtra("North", hashMapNames.get(buttonIDs[0]));
+                    intent.putExtra("South", hashMapNames.get(buttonIDs[1]));
+                    intent.putExtra("East", hashMapNames.get(buttonIDs[2]));
+                    intent.putExtra("West", hashMapNames.get(buttonIDs[3]));
+                    startService(intent);
                 } else {
                     askForSystemOverlayPermission();
                 }
@@ -99,9 +110,6 @@ import static android.content.ContentValues.TAG;
          editor.apply();
      }
 
-     /**
-      * load the states of the buttons
-      */
      public void loadData() {
          SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
          buttonID2appName.clear();
