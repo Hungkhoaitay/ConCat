@@ -23,38 +23,34 @@ import java.util.Set;
 import static android.content.ContentValues.TAG;
 
  public class MainActivity extends AppCompatActivity
-     implements View.OnClickListener, View.OnLongClickListener {
+     implements View.OnClickListener {
 
-    int[] buttonIDs;
+    final int[] buttonIDs = new int[] { R.id.firstButton, R.id.secondButton, R.id.thirdButton, R.id.fourthButton };
+    public static final String SHARED_PREFS = "sharedPrefs";
+    private HashMap<Integer, String> buttonID2appName = new HashMap<>();
 
     private static final int WINDOW_PERMISSION = 123;
     private static boolean PERMISSION_GRANTED = true;
-
-    public static final String SHARED_PREFS = "sharedPrefs";
-
-    private HashMap<Integer, String> hashMapNames = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        buttonIDs = new int[] { R.id.firstButton, R.id.secondButton, R.id.thirdButton, R.id.fourthButton };
-
         loadData();
 
         AppInfo appInfo = (AppInfo) getIntent().getSerializableExtra("app");
         int buttonID = getIntent().getIntExtra("Button ID", 0);
-        if ((appInfo != null) && (hashMapNames.containsKey(buttonID))) {
-            hashMapNames.remove(buttonID);
-            hashMapNames.put(buttonID, appInfo.getName());
+        if ((appInfo != null) && (buttonID2appName.containsKey(buttonID))) {
+            buttonID2appName.remove(buttonID);
+            buttonID2appName.put(buttonID, appInfo.getName());
         }
 
         Button conCat = findViewById(R.id.ConCat);
         conCat.setOnClickListener(this);
 
         for (int btnID: buttonIDs) {
-            AppInfo.of(hashMapNames.get(btnID)).setButton(this, findViewById(btnID));
+            AppInfo.of(buttonID2appName.get(btnID)).setButton(this, findViewById(btnID));
         }
 
         saveData();
@@ -90,32 +86,35 @@ import static android.content.ContentValues.TAG;
         }
     }
 
-     @Override
-     public boolean onLongClick(View v) {
-         return false;
-     }
-
+     /**
+      * save the states of the buttons
+      */
      public void saveData() {
          SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
          SharedPreferences.Editor editor = sharedPreferences.edit();
 
          for (int btnID: buttonIDs) {
-             editor.putString(Integer.toString(btnID), hashMapNames.get(btnID));
+             editor.putString(Integer.toString(btnID), buttonID2appName.get(btnID));
          }
          editor.apply();
      }
 
+     /**
+      * load the states of the buttons
+      */
      public void loadData() {
          SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-         hashMapNames.clear();
+         buttonID2appName.clear();
 
          for (int btnID: buttonIDs) {
-             hashMapNames.put(btnID, sharedPreferences.getString(Integer.toString(btnID), AppInfo.EMPTY));
+             buttonID2appName.put(btnID, sharedPreferences.getString(Integer.toString(btnID), AppInfo.EMPTY));
          }
      }
 
-     @Override
-     protected void onDestroy() {
-         super.onDestroy();
+     public void resetData() {
+         buttonID2appName.clear();
+         for (int btnID: buttonIDs) {
+             buttonID2appName.put(btnID, AppInfo.EMPTY);
+         }
      }
  }

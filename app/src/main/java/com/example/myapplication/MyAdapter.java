@@ -42,6 +42,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return new MyViewHolder(view);
     }
 
+    /**
+     * set the row of every rows in the RecycleView
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull MyAdapter.MyViewHolder holder, int position) {
         AppInfo app = appInfos.get(position);

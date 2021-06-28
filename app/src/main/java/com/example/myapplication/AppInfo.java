@@ -17,6 +17,9 @@ import java.io.Serializable;
 
 import static android.content.ContentValues.TAG;
 
+/**
+ * Class contains the necessary information about the app (icon, intent, label,...)
+ */
 public abstract class AppInfo implements Serializable {
 
     public static final String EMPTY = "empty";
@@ -93,7 +96,7 @@ public abstract class AppInfo implements Serializable {
         @Override
         public void setButton(Context context, Button btn) {
             btn.setOnClickListener(v -> {
-                Toast.makeText(context, "Empty Button! Hold to choose app", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Empty Button! Hold to choose app", Toast.LENGTH_LONG).show();
             });
 
             btn.setOnLongClickListener(v -> {
@@ -114,14 +117,28 @@ public abstract class AppInfo implements Serializable {
 
     private static final AppInfo NONE = new EmptyApp();
 
+    /**
+     *
+     * @return EMPTY_APP
+     */
     public static AppInfo none() {
         return NONE;
     }
 
+    /**
+     *
+     * @param applicationInfo
+     * @return SomeAppInfo
+     */
     public static AppInfo some(ApplicationInfo applicationInfo) {
         return new SomeAppInfo(applicationInfo);
     }
 
+    /**
+     *
+     * @param name
+     * @return SomeAppInfo if the name is not EMPTY, EMPTY_APP otherwise
+     */
     public static AppInfo of(String name) {
         if (name.equals(EMPTY)) {
             return none();
@@ -130,11 +147,33 @@ public abstract class AppInfo implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param context
+     * @return the icon of the app
+     * @throws PackageManager.NameNotFoundException
+     */
     public abstract Drawable getIcon(Context context) throws PackageManager.NameNotFoundException;
 
+    /**
+     *
+     * @param context
+     * @return the label of the app
+     * @throws PackageManager.NameNotFoundException
+     */
     public abstract String getLabel(Context context) throws PackageManager.NameNotFoundException;
 
+    /**
+     * method set the icon, name, onClickListener, onLongClickListener of the button
+     *
+     * @param context
+     * @param btn
+     */
     public abstract void setButton(Context context, Button btn);
 
+    /**
+     *
+     * @return the name of the app
+     */
     public abstract String getName();
 }
