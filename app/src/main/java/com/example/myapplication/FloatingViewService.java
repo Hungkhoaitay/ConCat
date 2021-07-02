@@ -287,7 +287,6 @@ public class FloatingViewService extends Service
     }
 
     private void appLauncher(String packageName, String name) {
-
         Intent intent = packageManager.getLaunchIntentForPackage(packageName);
         try {
             Log.i("", "Activity started");
