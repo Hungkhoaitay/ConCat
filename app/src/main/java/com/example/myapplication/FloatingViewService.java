@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -62,9 +63,11 @@ public class FloatingViewService extends Service
     private View expandedView;
 
     private PackageManager packageManager;
-    HashMap<Integer, String> hashMapNames;
+    private WindowManager.LayoutParams params;
 
     private static final int CLICK_THRESHOLD = 100;
+
+    private String[] appList = {null, null, null, null};
 
     @Override
     public boolean onDrag(View v, DragEvent event) {
@@ -97,6 +100,147 @@ public class FloatingViewService extends Service
         }
     }
 
+    public void createNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("Launch", "Launch", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+        Intent intent = new Intent(getApplicationContext(), FloatingViewService.class);
+        intent.putExtra("North", appList[0]);
+        // Log.i("TAG", hashMapNames.get(R.id.firstButton));
+        intent.putExtra("South", appList[1]);
+        intent.putExtra("East", appList[2]);
+        intent.putExtra("West", appList[3]);
+
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Launch")
+                .setSmallIcon(R.drawable.concat)
+                .setContentTitle("To relaunch application")
+                .setContentText("Click here to relaunch ConCat!")
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setOngoing(true);
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+        managerCompat.notify(12, builder.build());
+    }
+
+    public class NormalMovement extends Binder implements View.OnTouchListener {
+        private int initialX;
+        private int initialY;
+        private float initialTouchX;
+        private float initialTouchY;
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            Display display = mWindowManager.getDefaultDisplay();
+            float maxX = (float) 0.5 * display.getWidth();
+            float minX = -maxX;
+            float maxY = (float) 0.5 * display.getHeight();
+            float minY = -maxY;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    initialX = params.x;
+                    initialY = params.y;
+                    initialTouchX = event.getRawX();
+                    initialTouchY = event.getRawY();
+                    Log.i("", "Started action");
+                    Log.i("", initialX + "" + initialY);
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    int xDiff = Math.round(event.getRawX() - initialTouchX);
+                    int yDiff = Math.round(event.getRawY() - initialTouchY);
+                    params.x = initialX + (int) xDiff;
+                    params.y = initialY + (int) yDiff;
+                    Log.i("", params.x + " and " + params.y);
+                    Log.i("", xDiff + " and " + yDiff);
+                    mWindowManager.updateViewLayout(mFloatingView, params);
+                    return true;
+                case MotionEvent.ACTION_UP:
+                    float closestWall = params.x >= 0 ? maxX : minX;
+                    params.x = (int) closestWall;
+                    mWindowManager.updateViewLayout(mFloatingView, params);
+                    if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
+                        // specify click
+                        v.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                params.x = 0;
+                                params.y = 0;
+                                mWindowManager.updateViewLayout(mFloatingView, params);
+                            }
+                        });
+                        v.performClick();
+                        v.setOnTouchListener(new LauncherMovement());
+                    }
+                default:
+                    return false;
+            }
+        }
+    }
+
+    public class LauncherMovement extends Binder implements View.OnTouchListener {
+        private int initialX;
+        private int initialY;
+        private float initialTouchX;
+        private float initialTouchY;
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    initialX = params.x;
+                    initialY = params.y;
+                    initialTouchX = event.getRawX();
+                    initialTouchY = event.getRawY();
+                    Log.i("", "Started action");
+                    Log.i("", initialX + "" + initialY);
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    int xDiff = Math.round(event.getRawX() - initialTouchX);
+                    int yDiff = Math.round(event.getRawY() - initialTouchY);
+                    params.x = initialX + (int) xDiff;
+                    params.y = initialY + (int) yDiff;
+                    Log.i("", params.x + " and " + params.y);
+                    Log.i("", xDiff + " and " + yDiff);
+                    mWindowManager.updateViewLayout(mFloatingView, params);
+                    return true;
+                case MotionEvent.ACTION_UP:
+                    Toast.makeText(getApplicationContext(), params.x + " " + params.y, Toast.LENGTH_SHORT).show();
+                    if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
+                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(i);
+                        stopSelf();
+                        return true;
+                    }
+                    switch (checkRegion(params.x, params.y)) {
+                        case NORTH:
+                            launchApp(appList[0]);
+                            Log.i("", "App 1 launched");
+                            Toast.makeText(getApplicationContext(), "Launch app 1", Toast.LENGTH_SHORT).show();
+                            break;
+                        case SOUTH:
+                            launchApp(appList[1]);
+                            Toast.makeText(getApplicationContext(), "Launch app 2", Toast.LENGTH_SHORT).show();
+                            break;
+                        case EAST:
+                            launchApp(appList[2]);
+                            Toast.makeText(getApplicationContext(), "Launch app 3", Toast.LENGTH_SHORT).show();
+                            break;
+                        case WEST:
+                            launchApp(appList[3]);
+                            Toast.makeText(getApplicationContext(), "Launch app 4", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    stopSelf();
+                    createNotification();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -106,26 +250,20 @@ public class FloatingViewService extends Service
         }
 
         this.packageManager = getApplicationContext().getPackageManager();
-
-        this.hashMapNames = new HashMap<>();
-        String northApp = intent.getStringExtra("North");
-        this.hashMapNames.put(R.id.firstButton, northApp);
-        String southApp = intent.getStringExtra("South");
-        this.hashMapNames.put(R.id.secondButton, southApp);
-        String eastApp = intent.getStringExtra("East");
-        this.hashMapNames.put(R.id.thirdButton, eastApp);
-        String westApp = intent.getStringExtra("West");
-        this.hashMapNames.put(R.id.fourthButton, westApp);
-
+        this.appList[0] = intent.getStringExtra("North");
+        this.appList[1] = intent.getStringExtra("South");
+        this.appList[2] = intent.getStringExtra("East");
+        this.appList[3] = intent.getStringExtra("West");
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
-        final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        this.params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
         );
+
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mWindowManager.addView(mFloatingView, params);
 
@@ -140,125 +278,12 @@ public class FloatingViewService extends Service
         WidgetMovement widgetMovement = new WidgetMovement();
         widgetMovement.setParams(mWindowManager, mFloatingView, params);
         widgetMovement.setViews(collapsedView, expandedView);
-        mFloatingView.findViewById(R.id.relativeLayoutParent).setOnTouchListener(new View.OnTouchListener() {
-            private int initialX;
-            private int initialY;
-            private float initialTouchX;
-            private float initialTouchY;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Display display = mWindowManager.getDefaultDisplay();
-                float maxX = (float) 0.5 * display.getWidth();
-                float minX = -maxX;
-                float maxY = (float) 0.5 * display.getHeight();
-                float minY = -maxY;
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        initialX = params.x;
-                        initialY = params.y;
-                        initialTouchX = event.getRawX();
-                        initialTouchY = event.getRawY();
-                        Log.i("", "Started action");
-                        Log.i("", initialX + "" + initialY);
-                        return true;
-                    case MotionEvent.ACTION_MOVE:
-                        int xDiff = Math.round(event.getRawX() - initialTouchX);
-                        int yDiff = Math.round(event.getRawY() - initialTouchY);
-                        params.x = initialX + (int) xDiff;
-                        params.y = initialY + (int) yDiff;
-                        Log.i("", params.x + " and " + params.y);
-                        Log.i("", xDiff + " and " + yDiff);
-                        mWindowManager.updateViewLayout(mFloatingView, params);
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        float closestWall = params.x >= 0 ? maxX : minX;
-                        params.x = (int) closestWall;
-                        mWindowManager.updateViewLayout(mFloatingView, params);
-                        if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
-                            v.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    params.x = 0;
-                                    params.y = 0;
-                                    mWindowManager.updateViewLayout(mFloatingView, params);
-                                    v.setOnTouchListener(new View.OnTouchListener() {
-                                        private int initialX;
-                                        private int initialY;
-                                        private float initialTouchX;
-                                        private float initialTouchY;
-
-                                        @Override
-                                        public boolean onTouch(View v, MotionEvent event) {
-                                            switch (event.getAction()) {
-                                                case MotionEvent.ACTION_DOWN:
-                                                    initialX = params.x;
-                                                    initialY = params.y;
-                                                    initialTouchX = event.getRawX();
-                                                    initialTouchY = event.getRawY();
-                                                    Log.i("", "Started action");
-                                                    Log.i("", initialX + "" + initialY);
-                                                    return true;
-                                                case MotionEvent.ACTION_MOVE:
-                                                    int xDiff = Math.round(event.getRawX() - initialTouchX);
-                                                    int yDiff = Math.round(event.getRawY() - initialTouchY);
-                                                    params.x = initialX + (int) xDiff;
-                                                    params.y = initialY + (int) yDiff;
-                                                    Log.i("", params.x + " and " + params.y);
-                                                    Log.i("", xDiff + " and " + yDiff);
-                                                    mWindowManager.updateViewLayout(mFloatingView, params);
-                                                    return true;
-                                                case MotionEvent.ACTION_UP:
-                                                    Toast.makeText(getApplicationContext(), params.x + " " + params.y, Toast.LENGTH_SHORT).show();
-                                                    if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
-                                                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                        startActivity(i);
-                                                        stopSelf();
-                                                        return true;
-                                                    }
-                                                    switch (checkRegion(params.x, params.y)) {
-                                                        case NORTH:
-                                                            launchApp(northApp);
-                                                            Log.i("", "App 1 launched");
-                                                            Toast.makeText(getApplicationContext(), "Launch app 1", Toast.LENGTH_SHORT).show();
-                                                            break;
-                                                        case SOUTH:
-                                                            launchApp(southApp);
-                                                            Toast.makeText(getApplicationContext(), "Launch app 2", Toast.LENGTH_SHORT).show();
-                                                            break;
-                                                        case EAST:
-                                                            launchApp(eastApp);
-                                                            Toast.makeText(getApplicationContext(), "Launch app 3", Toast.LENGTH_SHORT).show();
-                                                            break;
-                                                        case WEST:
-                                                            launchApp(westApp);
-                                                            Toast.makeText(getApplicationContext(), "Launch app 4", Toast.LENGTH_SHORT).show();
-                                                            break;
-                                                    }
-                                                    stopSelf();
-                                                    createNotification();
-                                                    return true;
-                                                default:
-                                                    return false;
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                            v.performClick();
-                            Log.i("", "Button clicked");
-                            return false;
-                        } else {
-                            Log.i("", "Button moved");
-                            return true;
-                        }
-                    default:
-                        return false;
-                }
-            }
-        });
+        mFloatingView.findViewById(R.id.relativeLayoutParent).setOnTouchListener(new NormalMovement());
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private boolean clickCondition() {
+        return false;
     }
 
     @Override
@@ -267,7 +292,6 @@ public class FloatingViewService extends Service
     }
 
     public void launchApp(String appInfo) {
-
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         PackageManager packageManager = getApplicationContext().getPackageManager();
@@ -276,23 +300,16 @@ public class FloatingViewService extends Service
             return;
         }
         Log.i("", "package is not null");
-
         List<ResolveInfo> temp = packageManager.queryIntentActivities(intent, 0);
         for (ResolveInfo info : temp) {
             if (info.activityInfo.packageName.equalsIgnoreCase(appInfo)) {
-                appLauncher(info.activityInfo.packageName, info.activityInfo.name);
+                try {
+                    startActivity(packageManager.getLaunchIntentForPackage(info.activityInfo.packageName));
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(this, "Activity not found", Toast.LENGTH_SHORT).show();
+                }
                 break;
             }
-        }
-    }
-
-    private void appLauncher(String packageName, String name) {
-        Intent intent = packageManager.getLaunchIntentForPackage(packageName);
-        try {
-            Log.i("", "Activity started");
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "Activity not found!", Toast.LENGTH_SHORT);
         }
     }
 
@@ -309,30 +326,6 @@ public class FloatingViewService extends Service
                 break;
             default:
         }
-    }
-
-    public void createNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("Launch", "Launch", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-        Intent intent = new Intent(getApplicationContext(), FloatingViewService.class);
-        intent.putExtra("North", hashMapNames.get(R.id.firstButton));
-        Log.i("TAG", hashMapNames.get(R.id.firstButton));
-        intent.putExtra("South", hashMapNames.get(R.id.secondButton));
-        intent.putExtra("East", hashMapNames.get(R.id.thirdButton));
-        intent.putExtra("West", hashMapNames.get(R.id.fourthButton));
-
-        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Launch")
-                .setSmallIcon(R.drawable.concat)
-                .setContentTitle("To relaunch application")
-                .setContentText("Click here to relaunch ConCat!")
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-        managerCompat.notify(12, builder.build());
     }
 
     public void onDestroy(){
