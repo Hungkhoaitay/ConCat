@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">ConCat</string>
     <string name="app_not_found">App Not Found</string>
     <string name="title_activity_search">ScrollingActivity</string>
     <string name="large_text">

@@ -64,6 +64,7 @@ public class FloatingViewService extends Service
     private PackageManager packageManager;
     HashMap<Integer, String> hashMapNames;
 
+    private static final int CLICK_THRESHOLD = 100;
 
     @Override
     public boolean onDrag(View v, DragEvent event) {
@@ -144,7 +145,6 @@ public class FloatingViewService extends Service
             private int initialY;
             private float initialTouchX;
             private float initialTouchY;
-            private int CLICK_THRESHOLD = 200;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -210,6 +210,13 @@ public class FloatingViewService extends Service
                                                     return true;
                                                 case MotionEvent.ACTION_UP:
                                                     Toast.makeText(getApplicationContext(), params.x + " " + params.y, Toast.LENGTH_SHORT).show();
+                                                    if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
+                                                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        startActivity(i);
+                                                        stopSelf();
+                                                        return true;
+                                                    }
                                                     switch (checkRegion(params.x, params.y)) {
                                                         case NORTH:
                                                             launchApp(northApp);
