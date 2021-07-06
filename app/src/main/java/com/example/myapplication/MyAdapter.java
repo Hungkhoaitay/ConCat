@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,17 +24,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ComponentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
+        implements Filterable {
     private Context context;
     private List<AppInfo> appInfos;
+    private List<AppInfo> appInfosFull;
 
     public MyAdapter(Context c, List<AppInfo> appInfos) {
         this.context = c;
         this.appInfos = appInfos;
+        this.appInfosFull = new ArrayList<>(appInfos);
     }
 
     @NonNull
@@ -50,20 +60,21 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyAdapter.MyViewHolder holder, int position) {
         AppInfo app = appInfos.get(position);
-        try {
-            holder.title.setText(app.getLabel(this.context));
-            holder.icon.setImageDrawable(app.getIcon(this.context));
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.d(TAG, e.toString());
-        }
+
+        holder.title.setText(app.getLabel(this.context));
+        holder.icon.setImageDrawable(app.getIcon(this.context));
+
 
         holder.rowLayout.setOnClickListener(v -> {
             AppCompatActivity c = (AppCompatActivity) context;
             Intent intent = new Intent(c, MainActivity.class);
-            intent.putExtra("app", app);
 
             int buttonID = c.getIntent().getIntExtra("Button ID", 0);
-            intent.putExtra("Button ID", buttonID);
+
+            SharedPreferences sharedPreferences = c.getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(Integer.toString(buttonID), app.getName());
+            editor.apply();
 
             c.startActivity(intent);
         });
@@ -73,6 +84,40 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public int getItemCount() {
         return appInfos.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    private Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<AppInfo> filteredApps = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredApps.addAll(appInfosFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                filteredApps = appInfosFull.stream()
+                            .filter(app -> app.getLabel(context).toLowerCase().contains(filterPattern))
+                            .collect(Collectors.toList());
+
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredApps;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            appInfos.clear();
+            appInfos.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 

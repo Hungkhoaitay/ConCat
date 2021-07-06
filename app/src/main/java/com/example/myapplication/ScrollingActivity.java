@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -36,6 +37,7 @@ public class ScrollingActivity extends AppCompatActivity
 
     private ActivityScrollingBinding binding;
     private ActionBar actionBar;
+    MyAdapter myAdapter;
 
     RecyclerView applicationRecyclerView;
     List<ApplicationInfo> packages;
@@ -80,7 +82,7 @@ public class ScrollingActivity extends AppCompatActivity
 
         applicationRecyclerView = findViewById(R.id.applicationRecyclerView);
 
-        MyAdapter myAdapter = new MyAdapter(this, appInfos);
+        myAdapter = new MyAdapter(this, appInfos);
 
         applicationRecyclerView.setAdapter(myAdapter);
         applicationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -91,6 +93,20 @@ public class ScrollingActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_scrolling, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_settings);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                myAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
         return true;
     }
 
