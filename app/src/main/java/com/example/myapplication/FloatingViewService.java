@@ -327,7 +327,7 @@ public class FloatingViewService extends Service
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Launch")
                 .setSmallIcon(R.drawable.concat)
-                .setContentTitle("To relaunch")
+                .setContentTitle("To relaunch application")
                 .setContentText("Click here to relaunch ConCat!")
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
