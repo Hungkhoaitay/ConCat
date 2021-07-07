@@ -63,22 +63,25 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingTop="15dp"
-                    android:text="Facts:"
+                    android:text="Actions:"
                     android:textAlignment="center"
                     android:layout_gravity="center_horizontal"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                     android:textColor="#000099"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/quickLaunch"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New layout opened"
-                    android:textAlignment="center"
-                    android:layout_gravity="center_horizontal"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
-                    android:textColor="#006666"
-                    android:textStyle="bold" />
+                    android:text="Click to launch"
+                    android:layout_gravity="center_horizontal"/>
+                <Button
+                    android:id="@+id/returnToApp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open App"
+                    android:layout_gravity="center_horizontal"/>
             </LinearLayout>
         </LinearLayout>
 

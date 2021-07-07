@@ -61,11 +61,11 @@ public class FloatingViewService extends Service
     private View mFloatingView;
     private View collapsedView;
     private View expandedView;
-
     private PackageManager packageManager;
     private WindowManager.LayoutParams params;
 
-    private static final int CLICK_THRESHOLD = 100;
+    private static final int CLICK_THRESHOLD = 150;
+    private static final int LONG_CLICK_THRESHOLD = 1500;
 
     private String[] appList = {null, null, null, null};
 
@@ -98,6 +98,11 @@ public class FloatingViewService extends Service
                 return WEST;
             }
         }
+    }
+
+    private boolean checkIfMove(float x0, float y0, float x, float y) {
+        float dist = (float) Math.sqrt(Math.pow(x - x0, 2) + Math.pow(y - y0, 2));
+        return dist <= 5;
     }
 
     public void createNotification() {
@@ -161,16 +166,43 @@ public class FloatingViewService extends Service
                     mWindowManager.updateViewLayout(mFloatingView, params);
                     if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
                         // specify click
+                        /*
+                        v.setOnClickListener(v1 -> {
+                            params.x = 0;
+                            params.y = 0;
+                            mWindowManager.updateViewLayout(mFloatingView, params);
+                        });
+
+                         */
                         v.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Log.i("", "This is a click");
+                                setExpandedView();
+                            }
+                        });
+                        mFloatingView.findViewById(R.id.quickLaunch).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 params.x = 0;
                                 params.y = 0;
+                                setCollapsedView();
                                 mWindowManager.updateViewLayout(mFloatingView, params);
+                                mFloatingView.findViewById(R.id.relativeLayoutParent).
+                                        setOnTouchListener(new LauncherMovement());
+                                Log.i("", "Launch");
+                            }
+                        });
+                        mFloatingView.findViewById(R.id.returnToApp).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(i);
+                                stopSelf();
                             }
                         });
                         v.performClick();
-                        v.setOnTouchListener(new LauncherMovement());
                     }
                 default:
                     return false;
@@ -186,6 +218,7 @@ public class FloatingViewService extends Service
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+            Log.i("", "Reached");
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     initialX = params.x;
@@ -206,13 +239,6 @@ public class FloatingViewService extends Service
                     return true;
                 case MotionEvent.ACTION_UP:
                     Toast.makeText(getApplicationContext(), params.x + " " + params.y, Toast.LENGTH_SHORT).show();
-                    if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(i);
-                        stopSelf();
-                        return true;
-                    }
                     switch (checkRegion(params.x, params.y)) {
                         case NORTH:
                             launchApp(appList[0]);
@@ -232,7 +258,9 @@ public class FloatingViewService extends Service
                             Toast.makeText(getApplicationContext(), "Launch app 4", Toast.LENGTH_SHORT).show();
                             break;
                     }
-                    stopSelf();
+                    mWindowManager.removeView(mFloatingView);
+                    mFloatingView = null;
+                    //stopSelf();
                     createNotification();
                     return true;
                 default:
@@ -276,6 +304,7 @@ public class FloatingViewService extends Service
         mFloatingView.findViewById(R.id.buttonClose).setOnClickListener(this);
         expandedView.setOnClickListener(this);
 
+
         WidgetMovement widgetMovement = new WidgetMovement();
         widgetMovement.setParams(mWindowManager, mFloatingView, params);
         widgetMovement.setViews(collapsedView, expandedView);
@@ -283,9 +312,6 @@ public class FloatingViewService extends Service
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private boolean clickCondition() {
-        return false;
-    }
 
     @Override
     public void onCreate() {
@@ -305,6 +331,7 @@ public class FloatingViewService extends Service
         for (ResolveInfo info : temp) {
             if (info.activityInfo.packageName.equalsIgnoreCase(appInfo)) {
                 try {
+                    Log.i("" , info.activityInfo.packageName);
                     startActivity(packageManager.getLaunchIntentForPackage(info.activityInfo.packageName));
                 } catch (ActivityNotFoundException e) {
                     Toast.makeText(this, "Activity not found", Toast.LENGTH_SHORT).show();
@@ -318,15 +345,25 @@ public class FloatingViewService extends Service
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.layoutExpanded:
-                collapsedView.setVisibility(View.VISIBLE);
-                expandedView.setVisibility(View.GONE);
+                setCollapsedView();
                 Log.i("", "Button layout closed");
                 break;
             case R.id.buttonClose:
                 stopSelf();
+                createNotification();
                 break;
             default:
         }
+    }
+
+    public void setCollapsedView() {
+        collapsedView.setVisibility(View.VISIBLE);
+        expandedView.setVisibility(View.GONE);
+    }
+
+    public void setExpandedView() {
+        collapsedView.setVisibility(View.GONE);
+        expandedView.setVisibility(View.VISIBLE);
     }
 
     public void onDestroy(){

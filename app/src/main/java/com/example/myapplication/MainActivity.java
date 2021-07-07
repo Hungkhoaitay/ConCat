@@ -125,6 +125,11 @@ import static android.content.ContentValues.TAG;
      }
 
      @Override
+     protected void onStop() {
+         super.onStop();
+     }
+
+     @Override
      protected void onDestroy() {
          super.onDestroy();
          PERMISSION_GRANTED = false;
