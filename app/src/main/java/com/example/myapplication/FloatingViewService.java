@@ -165,15 +165,6 @@ public class FloatingViewService extends Service
                     params.x = (int) closestWall;
                     mWindowManager.updateViewLayout(mFloatingView, params);
                     if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
-                        // specify click
-                        /*
-                        v.setOnClickListener(v1 -> {
-                            params.x = 0;
-                            params.y = 0;
-                            mWindowManager.updateViewLayout(mFloatingView, params);
-                        });
-
-                         */
                         v.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -239,6 +230,9 @@ public class FloatingViewService extends Service
                     return true;
                 case MotionEvent.ACTION_UP:
                     Toast.makeText(getApplicationContext(), params.x + " " + params.y, Toast.LENGTH_SHORT).show();
+                    if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
+                        // Bind Service to General Movement and return back to previous state
+                    }
                     switch (checkRegion(params.x, params.y)) {
                         case NORTH:
                             launchApp(appList[0]);
