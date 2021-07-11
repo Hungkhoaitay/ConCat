@@ -101,9 +101,10 @@ public class FloatingViewService extends Service
         }
     }
 
-    private boolean checkIfMove(float x0, float y0, float x, float y) {
-        float dist = (float) Math.sqrt(Math.pow(x - x0, 2) + Math.pow(y - y0, 2));
-        return dist <= 5;
+
+    private boolean checkIfMove(float dx, float dy, long t1, long t2) {
+        float dist = (float) Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+        return (dist <= 5) && (Math.abs(t1 - t2) <= CLICK_THRESHOLD);
     }
 
     public void createNotification() {
@@ -162,10 +163,7 @@ public class FloatingViewService extends Service
                     mWindowManager.updateViewLayout(mFloatingView, params);
                     return true;
                 case MotionEvent.ACTION_UP:
-                    float closestWall = params.x >= 0 ? maxX : minX;
-                    params.x = (int) closestWall;
-                    mWindowManager.updateViewLayout(mFloatingView, params);
-                    if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
+                    if (checkIfMove(params.x - initialX, params.y - initialY, event.getEventTime(), event.getDownTime())) {
                         v.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -196,6 +194,9 @@ public class FloatingViewService extends Service
                         });
                         v.performClick();
                     }
+                    float closestWall = params.x >= 0 ? maxX : minX;
+                    params.x = (int) closestWall;
+                    mWindowManager.updateViewLayout(mFloatingView, params);
                 default:
                     return false;
             }
