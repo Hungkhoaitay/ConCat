@@ -61,6 +61,7 @@ public class FloatingViewService extends Service
     private View mFloatingView;
     private View collapsedView;
     private View expandedView;
+
     private PackageManager packageManager;
     private WindowManager.LayoutParams params;
 
@@ -313,6 +314,7 @@ public class FloatingViewService extends Service
     }
 
     public void launchApp(String appInfo) {
+
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         PackageManager packageManager = getApplicationContext().getPackageManager();
@@ -321,6 +323,7 @@ public class FloatingViewService extends Service
             return;
         }
         Log.i("", "package is not null");
+
         List<ResolveInfo> temp = packageManager.queryIntentActivities(intent, 0);
         for (ResolveInfo info : temp) {
             if (info.activityInfo.packageName.equalsIgnoreCase(appInfo)) {

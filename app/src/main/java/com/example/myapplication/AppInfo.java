@@ -9,14 +9,21 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.Serializable;
+import java.util.stream.Collectors;
 
 import static android.content.ContentValues.TAG;
 
+/**
+ * Class contains the necessary information about the app (icon, intent, label,...)
+ */
 public abstract class AppInfo implements Serializable {
 
     public static final String EMPTY = "empty";
@@ -33,14 +40,23 @@ public abstract class AppInfo implements Serializable {
         }
 
         @Override
-        public Drawable getIcon(Context context) throws PackageManager.NameNotFoundException {
-            return context.getPackageManager().getApplicationIcon(this.name);
+        public Drawable getIcon(Context context) {
+            try {
+                return context.getPackageManager().getApplicationIcon(this.name);
+            } catch (PackageManager.NameNotFoundException e) {
+                return null;
+            }
+
         }
 
         @Override
-        public String getLabel(Context context) throws PackageManager.NameNotFoundException {
+        public String getLabel(Context context) {
             PackageManager pm = context.getPackageManager();
-            return (String) pm.getApplicationLabel(pm.getApplicationInfo(this.name, 0));
+            try {
+                return (String) pm.getApplicationLabel(pm.getApplicationInfo(this.name, 0));
+            } catch (PackageManager.NameNotFoundException e) {
+                return null;
+            }
         }
 
         private void launch(Context context) {
@@ -54,12 +70,8 @@ public abstract class AppInfo implements Serializable {
         }
 
         @Override
-        public void setButton(Context context, Button btn) {
-            try {
-                btn.setText(this.getLabel(context));
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.d(TAG, e.toString());
-            }
+        public void setButton(Context context, ImageView btn) {
+            btn.setBackground(this.getIcon(context));
 
             btn.setOnClickListener(v -> this.launch(context));
 
@@ -91,9 +103,9 @@ public abstract class AppInfo implements Serializable {
         }
 
         @Override
-        public void setButton(Context context, Button btn) {
+        public void setButton(Context context, ImageView btn) {
             btn.setOnClickListener(v -> {
-                Toast.makeText(context, "Empty Button! Hold to choose app", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Empty Button! Hold to choose app", Toast.LENGTH_LONG).show();
             });
 
             btn.setOnLongClickListener(v -> {
@@ -103,7 +115,7 @@ public abstract class AppInfo implements Serializable {
                 return false;
             });
 
-            btn.setText("empty button");
+            btn.setBackgroundResource(R.drawable.concat);
         }
 
         @Override
@@ -114,14 +126,28 @@ public abstract class AppInfo implements Serializable {
 
     private static final AppInfo NONE = new EmptyApp();
 
+    /**
+     *
+     * @return EMPTY_APP
+     */
     public static AppInfo none() {
         return NONE;
     }
 
+    /**
+     *
+     * @param applicationInfo
+     * @return SomeAppInfo
+     */
     public static AppInfo some(ApplicationInfo applicationInfo) {
         return new SomeAppInfo(applicationInfo);
     }
 
+    /**
+     *
+     * @param name
+     * @return SomeAppInfo if the name is not EMPTY, EMPTY_APP otherwise
+     */
     public static AppInfo of(String name) {
         if (name.equals(EMPTY)) {
             return none();
@@ -130,11 +156,33 @@ public abstract class AppInfo implements Serializable {
         }
     }
 
-    public abstract Drawable getIcon(Context context) throws PackageManager.NameNotFoundException;
+    /**
+     *
+     * @param context
+     * @return the icon of the app
+     * @throws PackageManager.NameNotFoundException
+     */
+    public abstract Drawable getIcon(Context context);
 
-    public abstract String getLabel(Context context) throws PackageManager.NameNotFoundException;
+    /**
+     *
+     * @param context
+     * @return the label of the app
+     * @throws PackageManager.NameNotFoundException
+     */
+    public abstract String getLabel(Context context);
 
-    public abstract void setButton(Context context, Button btn);
+    /**
+     * method set the icon, name, onClickListener, onLongClickListener of the button
+     *
+     * @param context
+     * @param btn
+     */
+    public abstract void setButton(Context context, ImageView btn);
 
+    /**
+     *
+     * @return the name of the app
+     */
     public abstract String getName();
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardview_dark_background"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
     <TextView
@@ -15,7 +15,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="150dp"
         android:textSize="40sp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:text="Welcome!"/>
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/display"
         android:textSize="14sp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:text="Click and hold the buttons to customize your app!"/>
 
     <Button
@@ -35,44 +35,38 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
         android:text="ConCat"
-
         />
 
-    <Button
-        android:id="@+id/firstButton"
-        android:layout_width="@dimen/main_button_width"
+    <GridLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ConCat"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:layout_marginTop="21dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/distance"
-        />
+        android:useDefaultMargins="true">
 
-    <Button
-        android:id="@+id/secondButton"
-        android:layout_width="@dimen/main_button_width"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/firstButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/distance"
-        />
+        <ImageView
+            android:id="@+id/firstButton"
+            android:layout_width="@dimen/row_height"
+            android:layout_height="@dimen/row_height" />
 
-    <Button
-        android:id="@+id/thirdButton"
-        android:layout_width="@dimen/main_button_width"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/secondButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/distance"
-        />
+        <ImageView
+            android:id="@+id/secondButton"
+            android:layout_width="@dimen/row_height"
+            android:layout_height="@dimen/row_height" />
 
-    <Button
-        android:id="@+id/fourthButton"
-        android:layout_width="@dimen/main_button_width"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/thirdButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/distance"
-        />
+        <ImageView
+            android:id="@+id/thirdButton"
+            android:layout_width="@dimen/row_height"
+            android:layout_height="@dimen/row_height" />
+
+        <ImageView
+            android:id="@+id/fourthButton"
+            android:layout_width="@dimen/row_height"
+            android:layout_height="@dimen/row_height" />
+    </GridLayout>
 
 
 </RelativeLayout>
