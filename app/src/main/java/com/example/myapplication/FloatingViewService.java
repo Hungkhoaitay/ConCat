@@ -193,10 +193,12 @@ public class FloatingViewService extends Service
                             }
                         });
                         v.performClick();
+                        return true;
                     }
                     float closestWall = params.x >= 0 ? maxX : minX;
                     params.x = (int) closestWall;
                     mWindowManager.updateViewLayout(mFloatingView, params);
+                    return true;
                 default:
                     return false;
             }
