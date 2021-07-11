@@ -35,13 +35,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
-public class FloatingViewService extends Service
-        implements View.OnClickListener, View.OnDragListener {
+public class FloatingViewService extends Service implements View.OnClickListener {
 
     @Nullable
     @Override
@@ -69,11 +65,6 @@ public class FloatingViewService extends Service
     private static final int LONG_CLICK_THRESHOLD = 1500;
 
     private String[] appList = {null, null, null, null};
-
-    @Override
-    public boolean onDrag(View v, DragEvent event) {
-        return false;
-    }
 
     public FloatingViewService() {
 
@@ -236,6 +227,7 @@ public class FloatingViewService extends Service
                     Toast.makeText(getApplicationContext(), params.x + " " + params.y, Toast.LENGTH_SHORT).show();
                     if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
                         // Bind Service to General Movement and return back to previous state
+                        v.performClick();
                     }
                     switch (checkRegion(params.x, params.y)) {
                         case NORTH:
@@ -325,8 +317,6 @@ public class FloatingViewService extends Service
             Log.i("", "null package");
             return;
         }
-        Log.i("", "package is not null");
-
         List<ResolveInfo> temp = packageManager.queryIntentActivities(intent, 0);
         for (ResolveInfo info : temp) {
             if (info.activityInfo.packageName.equalsIgnoreCase(appInfo)) {
