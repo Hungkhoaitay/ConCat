@@ -84,9 +84,10 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private WindowManager.LayoutParams params;
 
     private static final int CLICK_THRESHOLD = 150;
+    private static final int MOVE_THRESHOLD = 5;
     private static final int LONG_CLICK_THRESHOLD = 1500;
 
-    private String[] appList = {null, null, null, null};
+    private final String[] appList = {null, null, null, null};
 
     public FloatingViewService() {
 
@@ -97,7 +98,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private static final int SOUTH = 3;
     private static final int EAST = 4;
 
-    private int checkRegion(int x, int y) {
+    public int checkRegion(int x, int y) {
         float gradient = Math.abs(y/x);
         if (x == 0) {
             if (y > 0) {
@@ -122,9 +123,9 @@ public class FloatingViewService extends Service implements View.OnClickListener
     }
 
 
-    private boolean checkIfMove(float dx, float dy, long t1, long t2) {
+    public boolean checkIfMove(float dx, float dy, long t1, long t2) {
         float dist = (float) Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-        return (dist <= 5) && (Math.abs(t1 - t2) <= CLICK_THRESHOLD);
+        return (dist <= MOVE_THRESHOLD) && (Math.abs(t1 - t2) <= CLICK_THRESHOLD);
     }
 
     public void createNotification() {
@@ -335,7 +336,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
     }
 
     public void launchApp(String appInfo) {
-
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         PackageManager packageManager = getApplicationContext().getPackageManager();
