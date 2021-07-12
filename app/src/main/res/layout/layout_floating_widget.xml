@@ -2,8 +2,8 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/relativeLayoutParent"
@@ -36,12 +36,14 @@
 
         <!-- This is the expanded layout -->
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/layoutExpanded"
             android:background="#a0cdd7"
-            android:orientation="horizontal"
-            android:padding="10dp"
+            android:orientation="vertical"
+            android:weightSum="1"
+            android:gravity="fill"
+            android:paddingTop="50px"
             android:visibility="gone">
 
             <ImageView
@@ -51,40 +53,78 @@
                 android:src="@drawable/concat"
                 tools:ignore="ContentDescription"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/buttonSimplifiedCoding"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/select_action"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:paddingTop="15dp"
-                    android:text="Facts:"
+                    android:text="@string/select_action"
                     android:textAlignment="center"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                     android:textColor="#000099"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    />
 
                 <Button
                     android:id="@+id/quickLaunch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Click to launch"
-                    android:layout_gravity="center_horizontal"/>
+                    android:text="@string/launch_apps"
+                    android:layout_below="@+id/select_action"
+                    android:layout_centerHorizontal="true"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/quickLaunch"
+                    android:layout_centerHorizontal="true"
+                    android:text="Record Screen"
+                    android:id="@+id/record_screen"/>
+
                 <Button
                     android:id="@+id/returnToApp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Open App"
-                    android:layout_gravity="center_horizontal"/>
-            </LinearLayout>
+                    android:text="@string/open_setting"
+                    android:layout_centerInParent="true"/>
+
+                <Button
+                    android:id="@+id/north"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/returnToApp"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/north"/>
+                <Button
+                    android:id="@+id/south"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/returnToApp"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/south" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/returnToApp"
+                    android:layout_centerVertical="true"
+                    android:text="@string/west"
+                    android:id="@+id/west"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/returnToApp"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/east"
+                    android:text="@string/east"/>
+
+            </RelativeLayout>
+
         </LinearLayout>
-
     </RelativeLayout>
-
 </FrameLayout>

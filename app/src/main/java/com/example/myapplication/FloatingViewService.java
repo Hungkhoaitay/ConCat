@@ -28,6 +28,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -42,7 +43,28 @@ public class FloatingViewService extends Service implements View.OnClickListener
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        Log.i("ServiceDemo", "On Bind");
+        return mBinder;
+    }
+
+    class MyServiceBinder extends Binder {
+        public FloatingViewService getService() {
+            return FloatingViewService.this;
+        }
+    }
+
+    private IBinder mBinder = new MyServiceBinder();
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.i("ServiceDemo", "On Unbind");
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.i("ServiceDemo", "On Rebind");
+        super.onRebind(intent);
     }
 
     /**
@@ -77,6 +99,13 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
     private int checkRegion(int x, int y) {
         float gradient = Math.abs(y/x);
+        if (x == 0) {
+            if (y > 0) {
+                return EAST;
+            } else {
+                return WEST;
+            }
+        }
         if (gradient >= 1) {
             if (y > 0) {
                 return NORTH;
@@ -141,16 +170,12 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     initialY = params.y;
                     initialTouchX = event.getRawX();
                     initialTouchY = event.getRawY();
-                    Log.i("", "Started action");
-                    Log.i("", initialX + "" + initialY);
                     return true;
                 case MotionEvent.ACTION_MOVE:
                     int xDiff = Math.round(event.getRawX() - initialTouchX);
                     int yDiff = Math.round(event.getRawY() - initialTouchY);
                     params.x = initialX + (int) xDiff;
                     params.y = initialY + (int) yDiff;
-                    Log.i("", params.x + " and " + params.y);
-                    Log.i("", xDiff + " and " + yDiff);
                     mWindowManager.updateViewLayout(mFloatingView, params);
                     return true;
                 case MotionEvent.ACTION_UP:
@@ -158,7 +183,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
                         v.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Log.i("", "This is a click");
                                 setExpandedView();
                             }
                         });
@@ -171,7 +195,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
                                 mWindowManager.updateViewLayout(mFloatingView, params);
                                 mFloatingView.findViewById(R.id.relativeLayoutParent).
                                         setOnTouchListener(new LauncherMovement());
-                                Log.i("", "Launch");
                             }
                         });
                         mFloatingView.findViewById(R.id.returnToApp).setOnClickListener(new View.OnClickListener() {
@@ -204,35 +227,38 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            Log.i("", "Reached");
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     initialX = params.x;
                     initialY = params.y;
                     initialTouchX = event.getRawX();
                     initialTouchY = event.getRawY();
-                    Log.i("", "Started action");
-                    Log.i("", initialX + "" + initialY);
                     return true;
                 case MotionEvent.ACTION_MOVE:
                     int xDiff = Math.round(event.getRawX() - initialTouchX);
                     int yDiff = Math.round(event.getRawY() - initialTouchY);
                     params.x = initialX + (int) xDiff;
                     params.y = initialY + (int) yDiff;
-                    Log.i("", params.x + " and " + params.y);
-                    Log.i("", xDiff + " and " + yDiff);
                     mWindowManager.updateViewLayout(mFloatingView, params);
                     return true;
                 case MotionEvent.ACTION_UP:
                     Toast.makeText(getApplicationContext(), params.x + " " + params.y, Toast.LENGTH_SHORT).show();
-                    if (event.getEventTime() - event.getDownTime() <= CLICK_THRESHOLD) {
+                    if (checkIfMove(params.x - initialX, params.y - initialY, event.getEventTime(), event.getDownTime())) {
                         // Bind Service to General Movement and return back to previous state
+                        v.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                params.x = 0;
+                                mFloatingView.findViewById(R.id.relativeLayoutParent).
+                                        setOnTouchListener(new NormalMovement());
+                            }
+                        });
                         v.performClick();
+                        return true;
                     }
                     switch (checkRegion(params.x, params.y)) {
                         case NORTH:
                             launchApp(appList[0]);
-                            Log.i("", "App 1 launched");
                             Toast.makeText(getApplicationContext(), "Launch app 1", Toast.LENGTH_SHORT).show();
                             break;
                         case SOUTH:
@@ -262,7 +288,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        Log.i("ServiceDemo", "Service started");
         if (mFloatingView != null) {
             Toast.makeText(getApplicationContext(), "Widget is already created", Toast.LENGTH_SHORT).show();
             return super.onStartCommand(intent, flags, startId);
@@ -314,14 +340,12 @@ public class FloatingViewService extends Service implements View.OnClickListener
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         PackageManager packageManager = getApplicationContext().getPackageManager();
         if (packageManager == null) {
-            Log.i("", "null package");
             return;
         }
         List<ResolveInfo> temp = packageManager.queryIntentActivities(intent, 0);
         for (ResolveInfo info : temp) {
             if (info.activityInfo.packageName.equalsIgnoreCase(appInfo)) {
                 try {
-                    Log.i("" , info.activityInfo.packageName);
                     startActivity(packageManager.getLaunchIntentForPackage(info.activityInfo.packageName));
                 } catch (ActivityNotFoundException e) {
                     Toast.makeText(this, "Activity not found", Toast.LENGTH_SHORT).show();
@@ -336,7 +360,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
         switch (v.getId()){
             case R.id.layoutExpanded:
                 setCollapsedView();
-                Log.i("", "Button layout closed");
                 break;
             case R.id.buttonClose:
                 stopSelf();
@@ -358,6 +381,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
     public void onDestroy(){
         super.onDestroy();
+        Log.i("ServiceDemo", "Service Destroyed");
         if (mFloatingView != null) {
             mWindowManager.removeView(mFloatingView);
         }
