@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
@@ -97,8 +98,14 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private static final int SOUTH = 3;
     private static final int EAST = 4;
 
+    /**
+     * Check this method later because of arithmetic errors
+     * Determine region for app launching
+     * @param x
+     * @param y
+     * @return
+     */
     private int checkRegion(int x, int y) {
-        float gradient = Math.abs(y/x);
         if (x == 0) {
             if (y > 0) {
                 return EAST;
@@ -106,6 +113,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 return WEST;
             }
         }
+        float gradient = Math.abs(y/x);
         if (gradient >= 1) {
             if (y > 0) {
                 return NORTH;
@@ -120,7 +128,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
             }
         }
     }
-
 
     private boolean checkIfMove(float dx, float dy, long t1, long t2) {
         float dist = (float) Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
@@ -239,6 +246,25 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     int yDiff = Math.round(event.getRawY() - initialTouchY);
                     params.x = initialX + (int) xDiff;
                     params.y = initialY + (int) yDiff;
+                    switch (checkRegion(params.x, params.y)) {
+                        case NORTH:
+                            //mFloatingView.findViewById(R.id.relativeLayoutParent).
+                            mFloatingView.setBackground(AppInfo.of(appList[0]).getIcon(getApplicationContext()));
+                            break;
+                        case SOUTH:
+                            //mFloatingView.findViewById(R.id.relativeLayoutParent).
+                            mFloatingView.setBackground(AppInfo.of(appList[1]).getIcon(getApplicationContext()));
+                            break;
+                        case EAST:
+                            mFloatingView.setBackground(AppInfo.of(appList[2]).getIcon(getApplicationContext()));
+                            break;
+                        case WEST:
+                            mFloatingView.setBackgroundResource(0);
+                            v.setBackground(AppInfo.of(appList[3]).getIcon(getApplicationContext()));
+                            break;
+                        default:
+                            break;
+                    }
                     mWindowManager.updateViewLayout(mFloatingView, params);
                     return true;
                 case MotionEvent.ACTION_UP:
@@ -386,5 +412,4 @@ public class FloatingViewService extends Service implements View.OnClickListener
             mWindowManager.removeView(mFloatingView);
         }
     }
-
 }
