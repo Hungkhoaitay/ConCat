@@ -40,41 +40,6 @@ import java.util.List;
 
 public class FloatingViewService extends Service implements View.OnClickListener {
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.i("ServiceDemo", "On Bind");
-        return mBinder;
-    }
-
-    class MyServiceBinder extends Binder {
-        public FloatingViewService getService() {
-            return FloatingViewService.this;
-        }
-    }
-
-    private IBinder mBinder = new MyServiceBinder();
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        Log.i("ServiceDemo", "On Unbind");
-        return super.onUnbind(intent);
-    }
-
-    @Override
-    public void onRebind(Intent intent) {
-        Log.i("ServiceDemo", "On Rebind");
-        super.onRebind(intent);
-    }
-
-    /**
-     * mWindowManager: System service responsible for managing what is displayed
-     * and organized on the screen of the user.
-     * mFloatingView: Design, action, and algorithms relating to the floating widget
-     * collapsedView:
-     * expandedView:
-     */
-
     private WindowManager mWindowManager;
     private View mFloatingView;
     private View collapsedView;
@@ -97,6 +62,79 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private static final int WEST = 2;
     private static final int SOUTH = 3;
     private static final int EAST = 4;
+
+    class MyServiceBinder extends Binder {
+        public FloatingViewService getService() {
+            return FloatingViewService.this;
+        }
+    }
+
+    private IBinder mBinder = new MyServiceBinder();
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.i("ServiceDemo", "Service started");
+        if (mFloatingView != null) {
+            Toast.makeText(getApplicationContext(), "Widget is already created", Toast.LENGTH_SHORT).show();
+            return mBinder;
+        }
+
+        this.packageManager = getApplicationContext().getPackageManager();
+        this.appList[0] = intent.getStringExtra("North");
+        this.appList[1] = intent.getStringExtra("South");
+        this.appList[2] = intent.getStringExtra("East");
+        this.appList[3] = intent.getStringExtra("West");
+
+        mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
+        this.params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+        );
+
+        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        mWindowManager.addView(mFloatingView, params);
+
+        // getting the collapsed and expanded view
+        collapsedView = mFloatingView.findViewById(R.id.layoutCollapsed);
+        expandedView = mFloatingView.findViewById(R.id.layoutExpanded);
+
+        //adding click listener to close button and expanded view
+        mFloatingView.findViewById(R.id.buttonClose).setOnClickListener(this);
+        expandedView.setOnClickListener(this);
+
+
+        WidgetMovement widgetMovement = new WidgetMovement();
+        widgetMovement.setParams(mWindowManager, mFloatingView, params);
+        widgetMovement.setViews(collapsedView, expandedView);
+        mFloatingView.findViewById(R.id.relativeLayoutParent).setOnTouchListener(new NormalMovement());
+        return mBinder;
+    }
+
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.i("ServiceDemo", "On Unbind");
+        stopSelf();
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.i("ServiceDemo", "On Rebind");
+        super.onRebind(intent);
+    }
+
+    /**
+     * mWindowManager: System service responsible for managing what is displayed
+     * and organized on the screen of the user.
+     * mFloatingView: Design, action, and algorithms relating to the floating widget
+     * collapsedView:
+     * expandedView:
+     */
 
     public int checkRegion(int x, int y) {
         float gradient = Math.abs(y/x);
@@ -287,6 +325,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
     }
 
 
+    /*
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("ServiceDemo", "Service started");
@@ -328,6 +367,8 @@ public class FloatingViewService extends Service implements View.OnClickListener
         mFloatingView.findViewById(R.id.relativeLayoutParent).setOnTouchListener(new NormalMovement());
         return super.onStartCommand(intent, flags, startId);
     }
+
+     */
 
 
     @Override

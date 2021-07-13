@@ -4,12 +4,16 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +35,47 @@ import static android.content.ContentValues.TAG;
     private static boolean PERMISSION_GRANTED = true;
 
     private SharedPreferences sharedPreferences;
+
+
+     private FloatingViewService fvs;
+     private boolean isBound;
+     private ServiceConnection serviceConnection;
+     private Intent intent;
+
+     private void bindService() {
+         if (fvs == null) {
+             this.serviceConnection = new ServiceConnection() {
+                 @Override
+                 public void onServiceConnected(ComponentName name, IBinder service) {
+                     Log.i("", "Service connected");
+                     FloatingViewService.MyServiceBinder myServiceBinder =
+                             (FloatingViewService.MyServiceBinder) service;
+                     fvs = myServiceBinder.getService();
+                     intent = new Intent(MainActivity.this, FloatingViewService.class);
+                     intent.putExtra("North", sharedPreferences.getString(Integer.toString(buttonIDs[0]), AppInfo.EMPTY));
+                     intent.putExtra("South", sharedPreferences.getString(Integer.toString(buttonIDs[1]), AppInfo.EMPTY));
+                     intent.putExtra("East", sharedPreferences.getString(Integer.toString(buttonIDs[2]), AppInfo.EMPTY));
+                     intent.putExtra("West", sharedPreferences.getString(Integer.toString(buttonIDs[3]), AppInfo.EMPTY));
+                     isBound = true;
+                 }
+
+                 @Override
+                 public void onServiceDisconnected(ComponentName name) {
+                     Log.i("", "Service disconnected");
+                     fvs = null;
+                     isBound = false;
+                 }
+             };
+         }
+         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+     }
+
+     private void unBindService() {
+         if (isBound) {
+             unbindService(serviceConnection);
+             isBound = false;
+         }
+     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +109,7 @@ import static android.content.ContentValues.TAG;
                     break;
                 }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
-                    Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
-                    intent.putExtra("North", sharedPreferences.getString(Integer.toString(buttonIDs[0]), AppInfo.EMPTY));
-                    intent.putExtra("South", sharedPreferences.getString(Integer.toString(buttonIDs[1]), AppInfo.EMPTY));
-                    intent.putExtra("East", sharedPreferences.getString(Integer.toString(buttonIDs[2]), AppInfo.EMPTY));
-                    intent.putExtra("West", sharedPreferences.getString(Integer.toString(buttonIDs[3]), AppInfo.EMPTY));
-                    startService(intent);
+                    bindService();
                 } else {
                     askForSystemOverlayPermission();
                 }
@@ -111,8 +151,29 @@ import static android.content.ContentValues.TAG;
      }
 
      @Override
+     protected void onResume() {
+         Log.i("", "On Resume");
+         if (this.fvs != null) {
+             unBindService();
+             this.fvs = null;
+         }
+         super.onResume();
+     }
+
+     @Override
+     protected void onRestart() {
+         Log.i("", "On Restart");
+         if (this.fvs != null) {
+             unBindService();
+             this.fvs = null;
+         }
+         super.onRestart();
+     }
+
+     @Override
      protected void onDestroy() {
          super.onDestroy();
+         unBindService();
          PERMISSION_GRANTED = false;
      }
  }
