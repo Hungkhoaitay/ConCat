@@ -41,12 +41,12 @@ import java.util.List;
 public class FloatingViewService extends Service implements View.OnClickListener {
 
     private WindowManager mWindowManager;
-    private View mFloatingView;
-    private View collapsedView;
-    private View expandedView;
+    View mFloatingView;
+    View collapsedView;
+    View expandedView;
 
     private PackageManager packageManager;
-    private WindowManager.LayoutParams params;
+    WindowManager.LayoutParams params;
 
     private static final int CLICK_THRESHOLD = 150;
     private static final int MOVE_THRESHOLD = 5;
@@ -137,7 +137,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
      */
 
     public int checkRegion(int x, int y) {
-        float gradient = Math.abs(y/x);
         if (x == 0) {
             if (y > 0) {
                 return EAST;
@@ -145,6 +144,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 return WEST;
             }
         }
+        float gradient = Math.abs(y/x);
         if (gradient >= 1) {
             if (y > 0) {
                 return NORTH;
