@@ -69,6 +69,10 @@ public class FloatingViewService extends Service implements View.OnClickListener
         }
     }
 
+    public FloatingViewService getService() {
+        return this;
+    }
+
     private IBinder mBinder = new MyServiceBinder();
 
     @Nullable

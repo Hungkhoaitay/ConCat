@@ -5,16 +5,18 @@ import android.content.Context;
 import android.os.Build;
 import android.os.IBinder;
 import android.test.ServiceTestCase;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.test.InstrumentationRegistry;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
-import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ServiceTestRule;
 import androidx.test.runner.AndroidJUnit4;
+import org.junit.runner.RunWith;
 
 import android.app.Service;
 import android.app.ActivityManager;
@@ -37,6 +39,7 @@ import org.robolectric.annotation.Config;
 
 import java.util.concurrent.TimeoutException;
 
+import static android.os.Looper.getMainLooper;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertNull;
@@ -64,21 +67,32 @@ import org.robolectric.shadow.api.Shadow;
  * https://androidx.de/androidx/test/rule/ServiceTestRule.html
  */
 
-@Config(sdk = {Build.VERSION_CODES.O_MR1})
 @RunWith(AndroidJUnit4.class)
+@Config(sdk = {Build.VERSION_CODES.O_MR1})
 public class FloatingWidgetTest {
 
     private FloatingViewService floatingViewService;
 
+    @Rule
+    public ServiceTestRule serviceTestRule = new ServiceTestRule();
+
     @Before
-    public void setup() {
+    public void setUp() {
         floatingViewService = Robolectric.setupService(FloatingViewService.class);
+        LayoutInflater inflater = (LayoutInflater) floatingViewService.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        floatingViewService.mFloatingView = inflater.inflate(R.layout.layout_floating_widget, null);
     }
 
     @Test
-    public void onCreateTest() {
+    public void onCreateTest() throws TimeoutException {
+        /*
+        shadowOf(getMainLooper()).idle();
         Application application = ApplicationProvider.getApplicationContext();
+        Intent newIntent = new Intent(InstrumentationRegistry.getTargetContext(), FloatingViewService.class);
+        serviceTestRule.startService(newIntent);
         // check that service is started on calling it
+
+         */
         assertThat(floatingViewService).isNotNull();
     }
 
