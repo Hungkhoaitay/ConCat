@@ -13,4 +13,6 @@
     <string name="south">South</string>
     <string name="west">West</string>
     <string name="east">East</string>
+    <string name="navigation_drawer_open">Open Navigation Drawer</string>
+    <string name="navigation_drawer_close">Close Navigation Drawer</string>
 </resources>
