@@ -1,10 +1,5 @@
  package com.example.myapplication;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -12,7 +7,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -21,7 +15,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,12 +23,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.GetChars;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -43,8 +33,6 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.navigation.NavigationView;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -72,7 +60,6 @@ import static android.content.ContentValues.TAG;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
         loadData();
@@ -99,7 +86,6 @@ import static android.content.ContentValues.TAG;
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
         actionBarDrawerToggle.syncState();
-
     }
 
     private void askForSystemOverlayPermission() {
@@ -174,30 +160,15 @@ import static android.content.ContentValues.TAG;
          PERMISSION_GRANTED = false;
      }
 
-     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-             new ActivityResultContracts.StartActivityForResult(),
-             new ActivityResultCallback<ActivityResult>() {
-                 @Override
-                 public void onActivityResult(ActivityResult result) {
-                     if (result.getResultCode() == Activity.RESULT_OK) {
-                         Intent i = result.getData();
-                         // handle the code here
-                     }
-                 }
-             });
-
      @Override
      public boolean onNavigationItemSelected(MenuItem item) {
          switch (item.getItemId()) {
-             case R.id.profile:
-             case R.id.main_activity_screen:
+             case R.id.item1:
 
-             case R.id.customize_icon:
-                 Intent intent = new Intent(this, ChooseIcon.class);
-                 activityResultLauncher.launch(intent);
+             case R.id.item2:
+
+             case R.id.item3:
                  return true;
-             case R.id.settings:
-
              default:
                  return false;
          }
