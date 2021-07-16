@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/top"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/profile"
+            android:title="Profile">
+        </item>
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/main_activity_screen"
+            android:title="Main Activity Screen">
+        </item>
+    </group>
+    <group>
+        <item
+            android:id="@+id/customize_icon"
+            android:title="Customize Icon"/>
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/settings"
+            android:title="Settings">
+        </item>
+    </group>
+</menu>
