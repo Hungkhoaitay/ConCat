@@ -47,6 +47,8 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".ChooseIcon"/>
+
     </application>
 
 </manifest>

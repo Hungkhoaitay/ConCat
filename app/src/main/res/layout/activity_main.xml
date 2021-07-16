@@ -9,79 +9,88 @@
     android:id="@+id/drawerLayout"
     tools:openDrawer="start">
 
-    <RelativeLayout
-        android:id="@+id/mainContent"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        tools:context=".MainActivity">
+        android:layout_height="match_parent">
 
         <include
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
             layout="@layout/drawer_toolbar"/>
 
-        <TextView
-            android:id="@+id/display"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="150dp"
-            android:textSize="40sp"
-            android:textColor="@color/black"
-            android:text="Welcome!"/>
+        <RelativeLayout
+            android:id="@+id/mainContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="visible"
+            tools:context=".MainActivity">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/display"
-            android:textSize="14sp"
-            android:textColor="@color/black"
-            android:text="Click and hold the buttons to customize your app!"/>
+            <TextView
+                android:id="@+id/display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="150dp"
+                android:textSize="40sp"
+                android:textColor="@color/black"
+                android:text="Welcome!"/>
 
-        <Button
-            android:id="@+id/ConCat"
-            android:layout_width="@dimen/main_button_width"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/display"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"
-            android:text="ConCat"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/display"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:text="Click and hold the buttons to customize your app!"/>
 
-        <GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ConCat"
-            android:columnCount="2"
-            android:rowCount="2"
-            android:layout_marginTop="21dp"
-            android:layout_centerHorizontal="true"
-            android:useDefaultMargins="true">
+            <Button
+                android:id="@+id/ConCat"
+                android:layout_width="@dimen/main_button_width"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/display"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="100dp"
+                android:text="ConCat"
+                />
 
-            <ImageView
-                android:id="@+id/firstButton"
-                android:layout_width="@dimen/row_height"
-                android:layout_height="@dimen/row_height" />
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ConCat"
+                android:columnCount="2"
+                android:rowCount="2"
+                android:layout_marginTop="21dp"
+                android:layout_centerHorizontal="true"
+                android:useDefaultMargins="true">
 
-            <ImageView
-                android:id="@+id/secondButton"
-                android:layout_width="@dimen/row_height"
-                android:layout_height="@dimen/row_height" />
+                <ImageView
+                    android:id="@+id/firstButton"
+                    android:layout_width="@dimen/row_height"
+                    android:layout_height="@dimen/row_height" />
 
-            <ImageView
-                android:id="@+id/thirdButton"
-                android:layout_width="@dimen/row_height"
-                android:layout_height="@dimen/row_height" />
+                <ImageView
+                    android:id="@+id/secondButton"
+                    android:layout_width="@dimen/row_height"
+                    android:layout_height="@dimen/row_height" />
 
-            <ImageView
-                android:id="@+id/fourthButton"
-                android:layout_width="@dimen/row_height"
-                android:layout_height="@dimen/row_height" />
-        </GridLayout>
-    </RelativeLayout>
+                <ImageView
+                    android:id="@+id/thirdButton"
+                    android:layout_width="@dimen/row_height"
+                    android:layout_height="@dimen/row_height" />
+
+                <ImageView
+                    android:id="@+id/fourthButton"
+                    android:layout_width="@dimen/row_height"
+                    android:layout_height="@dimen/row_height" />
+            </GridLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
