@@ -193,26 +193,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
                                 setExpandedView();
                             }
                         });
-                        mFloatingView.findViewById(R.id.quickLaunch).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                params.x = 0;
-                                params.y = 0;
-                                setCollapsedView();
-                                mWindowManager.updateViewLayout(mFloatingView, params);
-                                mFloatingView.findViewById(R.id.relativeLayoutParent).
-                                        setOnTouchListener(new LauncherMovement());
-                            }
-                        });
-                        mFloatingView.findViewById(R.id.returnToApp).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(i);
-                                stopSelf();
-                            }
-                        });
                         v.performClick();
                         return true;
                     }
@@ -232,6 +212,9 @@ public class FloatingViewService extends Service implements View.OnClickListener
         private float initialTouchX;
         private float initialTouchY;
 
+        private void handleNull() {
+            Toast.makeText(getApplicationContext(), "No app is launched", Toast.LENGTH_SHORT).show();
+        }
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
@@ -248,19 +231,20 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     params.y = initialY + (int) yDiff;
                     switch (checkRegion(params.x, params.y)) {
                         case NORTH:
-                            //mFloatingView.findViewById(R.id.relativeLayoutParent).
-                            mFloatingView.setBackground(AppInfo.of(appList[0]).getIcon(getApplicationContext()));
+                            mFloatingView.findViewById(R.id.collapsed_iv).
+                                    setBackground(AppInfo.of(appList[0]).getIcon(getApplicationContext()));
                             break;
                         case SOUTH:
-                            //mFloatingView.findViewById(R.id.relativeLayoutParent).
-                            mFloatingView.setBackground(AppInfo.of(appList[1]).getIcon(getApplicationContext()));
+                            mFloatingView.findViewById(R.id.collapsed_iv).
+                                    setBackground(AppInfo.of(appList[1]).getIcon(getApplicationContext()));
                             break;
                         case EAST:
-                            mFloatingView.setBackground(AppInfo.of(appList[2]).getIcon(getApplicationContext()));
+                            mFloatingView.findViewById(R.id.collapsed_iv).
+                                    setBackground(AppInfo.of(appList[2]).getIcon(getApplicationContext()));
                             break;
                         case WEST:
-                            mFloatingView.setBackgroundResource(0);
-                            v.setBackground(AppInfo.of(appList[3]).getIcon(getApplicationContext()));
+                            mFloatingView.findViewById(R.id.collapsed_iv).
+                                    setBackground(AppInfo.of(appList[3]).getIcon(getApplicationContext()));
                             break;
                         default:
                             break;
@@ -302,7 +286,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     }
                     mWindowManager.removeView(mFloatingView);
                     mFloatingView = null;
-                    //stopSelf();
+                    stopSelf();
                     createNotification();
                     return true;
                 default:
@@ -334,7 +318,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
         );
-
+        mFloatingView.findViewById(R.id.collapsed_iv).setBackgroundResource(R.drawable.concat);
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mWindowManager.addView(mFloatingView, params);
 
@@ -344,12 +328,10 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
         //adding click listener to close button and expanded view
         mFloatingView.findViewById(R.id.buttonClose).setOnClickListener(this);
+        mFloatingView.findViewById(R.id.quickLaunch).setOnClickListener(this);
+        mFloatingView.findViewById(R.id.returnToApp).setOnClickListener(this);
         expandedView.setOnClickListener(this);
 
-
-        WidgetMovement widgetMovement = new WidgetMovement();
-        widgetMovement.setParams(mWindowManager, mFloatingView, params);
-        widgetMovement.setViews(collapsedView, expandedView);
         mFloatingView.findViewById(R.id.relativeLayoutParent).setOnTouchListener(new NormalMovement());
         return super.onStartCommand(intent, flags, startId);
     }
@@ -384,6 +366,20 @@ public class FloatingViewService extends Service implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.quickLaunch:
+                params.x = 0;
+                params.y = 0;
+                setCollapsedView();
+                mWindowManager.updateViewLayout(mFloatingView, params);
+                mFloatingView.findViewById(R.id.relativeLayoutParent).
+                        setOnTouchListener(new LauncherMovement());
+                break;
+            case R.id.returnToApp:
+                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                stopSelf();
+                break;
             case R.id.layoutExpanded:
                 setCollapsedView();
                 break;
@@ -396,11 +392,20 @@ public class FloatingViewService extends Service implements View.OnClickListener
     }
 
     public void setCollapsedView() {
+        mWindowManager.updateViewLayout(mFloatingView, this.params);
         collapsedView.setVisibility(View.VISIBLE);
         expandedView.setVisibility(View.GONE);
     }
 
     public void setExpandedView() {
+        mWindowManager.updateViewLayout(mFloatingView, new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+        ));
+
         collapsedView.setVisibility(View.GONE);
         expandedView.setVisibility(View.VISIBLE);
     }
