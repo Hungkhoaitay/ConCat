@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.ServiceTestCase;
+// import android.test.ServiceTestCase;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
