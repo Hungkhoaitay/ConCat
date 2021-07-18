@@ -13,6 +13,7 @@
     <string name="south">South</string>
     <string name="west">West</string>
     <string name="east">East</string>
+    <string name="tap_to_return">Tap anywhere else to return</string>
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
     <string name="button_fragment">Button</string>

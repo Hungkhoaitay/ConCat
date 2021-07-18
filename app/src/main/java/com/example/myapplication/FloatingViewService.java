@@ -87,63 +87,46 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private static final int CLICK_THRESHOLD = 150;
     private static final int LONG_CLICK_THRESHOLD = 1500;
 
+
+
+    private String[] appList = {null, null, null, null};
+
     public FloatingViewService() {
 
     }
 
-
     private static final int NORTH = 1;
-    private static final int SOUTH = 2;
-    private static final int EAST = 3;
-    private static final int WEST = 4;
-
-    // North, South, East, West
-    private String[] appList = {null, null, null, null};
+    private static final int WEST = 2;
+    private static final int SOUTH = 3;
+    private static final int EAST = 4;
 
     /**
      * Check this method later because of arithmetic errors
      * Determine region for app launching
-     *
-     * Annotations and rules: x left to right, y up to down
-     * |-------------|
-     * |-x, -y|+x, -y|
-     * |------|------|
-     * |-x, +y|+x, +y|
-     * |------|------|
-     *
      * @param x
      * @param y
      * @return
      */
-    int checkRegion(int x, int y) {
-        if (x == 0 && y == 0) {
-            return NORTH;
-        } else if (x == 0) {
+    public int checkRegion(int x, int y) {
+        if (x == 0) {
             if (y > 0) {
-                return SOUTH;
-            } else {
-                return NORTH;
-            }
-        } else if (y == 0) {
-            if (x > 0) {
                 return EAST;
             } else {
                 return WEST;
             }
-        } else {
-            float gradient = Math.abs(y/x);
-            if (gradient >= 1) {
-                if (y > 0) {
-                    return SOUTH;
-                } else {
-                    return NORTH;
-                }
+        }
+        float gradient = Math.abs(y/x);
+        if (gradient >= 1) {
+            if (y > 0) {
+                return NORTH;
             } else {
-                if (x > 0) {
-                    return EAST;
-                } else {
-                    return WEST;
-                }
+                return SOUTH;
+            }
+        } else {
+            if (x > 0) {
+                return EAST;
+            } else {
+                return WEST;
             }
         }
     }
@@ -285,23 +268,19 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     switch (checkRegion(params.x, params.y)) {
                         case NORTH:
                             launchApp(appList[0]);
-                            Toast.makeText(getApplicationContext(), "Launch upwards " +
-                                    AppInfo.of(appList[0]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Launch app 1", Toast.LENGTH_SHORT).show();
                             break;
                         case SOUTH:
                             launchApp(appList[1]);
-                            Toast.makeText(getApplicationContext(), "Launch downwards " +
-                                    AppInfo.of(appList[1]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Launch app 2", Toast.LENGTH_SHORT).show();
                             break;
                         case EAST:
                             launchApp(appList[2]);
-                            Toast.makeText(getApplicationContext(), "Launch rightwards " +
-                                    AppInfo.of(appList[2]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Launch app 3", Toast.LENGTH_SHORT).show();
                             break;
                         case WEST:
                             launchApp(appList[3]);
-                            Toast.makeText(getApplicationContext(), "Launch leftwards " +
-                                    AppInfo.of(appList[3]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Launch app 4", Toast.LENGTH_SHORT).show();
                             break;
                     }
                     mWindowManager.removeView(mFloatingView);
@@ -329,7 +308,9 @@ public class FloatingViewService extends Service implements View.OnClickListener
         this.appList[1] = intent.getStringExtra("South");
         this.appList[2] = intent.getStringExtra("East");
         this.appList[3] = intent.getStringExtra("West");
-
+        for (int i = 0; i < appList.length; i++) {
+            Log.i("", appList[i]);
+        }
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
         this.params = new WindowManager.LayoutParams(
