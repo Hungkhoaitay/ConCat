@@ -15,10 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -43,8 +39,6 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.navigation.NavigationView;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -80,7 +74,6 @@ import static android.content.ContentValues.TAG;
 
         Button conCat = findViewById(R.id.ConCat);
         conCat.setOnClickListener(this);
-
     }
 
     private void setUpDrawer() {
@@ -99,7 +92,6 @@ import static android.content.ContentValues.TAG;
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
         actionBarDrawerToggle.syncState();
-
     }
 
     private void askForSystemOverlayPermission() {
@@ -190,14 +182,17 @@ import static android.content.ContentValues.TAG;
      public boolean onNavigationItemSelected(MenuItem item) {
          switch (item.getItemId()) {
              case R.id.profile:
+                 return true;
              case R.id.main_activity_screen:
-
+                 Toast.makeText(getApplicationContext(), "Main Activity", Toast.LENGTH_SHORT).show();
+                 return true;
              case R.id.customize_icon:
                  Intent intent = new Intent(this, ChooseIcon.class);
                  activityResultLauncher.launch(intent);
                  return true;
              case R.id.settings:
-
+                 Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
+                 return true;
              default:
                  return false;
          }

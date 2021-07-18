@@ -17,4 +17,8 @@
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
     <string name="button_fragment">Button</string>
+    <string name="view_profile">Profile</string>
+    <string name="main_activity_screen">Main Activity Screen</string>
+    <string name="customize_icon">Customize Icon</string>
+    <string name="settings">Settings</string>
 </resources>

@@ -37,6 +37,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.List;
 
 public class FloatingViewService extends Service implements View.OnClickListener {
@@ -379,6 +381,8 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 mWindowManager.updateViewLayout(mFloatingView, params);
                 mFloatingView.findViewById(R.id.relativeLayoutParent).
                         setOnTouchListener(new LauncherMovement());
+                Toast.makeText(getApplicationContext(), "App launcher state entered",
+                        Toast.LENGTH_SHORT).show();
                 break;
             case R.id.returnToApp:
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
