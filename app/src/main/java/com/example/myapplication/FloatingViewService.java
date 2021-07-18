@@ -87,6 +87,8 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private static final int CLICK_THRESHOLD = 150;
     private static final int LONG_CLICK_THRESHOLD = 1500;
 
+
+
     private String[] appList = {null, null, null, null};
 
     public FloatingViewService() {
@@ -105,7 +107,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
      * @param y
      * @return
      */
-    private int checkRegion(int x, int y) {
+    public int checkRegion(int x, int y) {
         if (x == 0) {
             if (y > 0) {
                 return EAST;
@@ -142,10 +144,11 @@ public class FloatingViewService extends Service implements View.OnClickListener
         }
         Intent intent = new Intent(getApplicationContext(), FloatingViewService.class);
         intent.putExtra("North", appList[0]);
-        // Log.i("TAG", hashMapNames.get(R.id.firstButton));
         intent.putExtra("South", appList[1]);
         intent.putExtra("East", appList[2]);
         intent.putExtra("West", appList[3]);
+
+        Log.i("", intent.getStringExtra("North"));
 
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Launch")
@@ -212,9 +215,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
         private float initialTouchX;
         private float initialTouchY;
 
-        private void handleNull() {
-            Toast.makeText(getApplicationContext(), "No app is launched", Toast.LENGTH_SHORT).show();
-        }
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
@@ -252,7 +252,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     mWindowManager.updateViewLayout(mFloatingView, params);
                     return true;
                 case MotionEvent.ACTION_UP:
-                    Toast.makeText(getApplicationContext(), params.x + " " + params.y, Toast.LENGTH_SHORT).show();
                     if (checkIfMove(params.x - initialX, params.y - initialY, event.getEventTime(), event.getDownTime())) {
                         // Bind Service to General Movement and return back to previous state
                         v.setOnClickListener(new View.OnClickListener() {
@@ -309,6 +308,9 @@ public class FloatingViewService extends Service implements View.OnClickListener
         this.appList[1] = intent.getStringExtra("South");
         this.appList[2] = intent.getStringExtra("East");
         this.appList[3] = intent.getStringExtra("West");
+        for (int i = 0; i < appList.length; i++) {
+            Log.i("", appList[i]);
+        }
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
         this.params = new WindowManager.LayoutParams(
@@ -387,6 +389,10 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 stopSelf();
                 createNotification();
                 break;
+            case R.id.firstButton:
+            case R.id.secondButton:
+            case R.id.thirdButton:
+            case R.id.fourthButton:
             default:
         }
     }
@@ -398,14 +404,14 @@ public class FloatingViewService extends Service implements View.OnClickListener
     }
 
     public void setExpandedView() {
-        mWindowManager.updateViewLayout(mFloatingView, new WindowManager.LayoutParams(
+        WindowManager.LayoutParams expandedParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
-        ));
-
+        );
+        mWindowManager.updateViewLayout(mFloatingView, expandedParams);
         collapsedView.setVisibility(View.GONE);
         expandedView.setVisibility(View.VISIBLE);
     }
