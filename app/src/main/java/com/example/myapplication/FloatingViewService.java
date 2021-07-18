@@ -87,46 +87,63 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private static final int CLICK_THRESHOLD = 150;
     private static final int LONG_CLICK_THRESHOLD = 1500;
 
-
-
-    private String[] appList = {null, null, null, null};
-
     public FloatingViewService() {
 
     }
 
+
     private static final int NORTH = 1;
-    private static final int WEST = 2;
-    private static final int SOUTH = 3;
-    private static final int EAST = 4;
+    private static final int SOUTH = 2;
+    private static final int EAST = 3;
+    private static final int WEST = 4;
+
+    // North, South, East, West
+    private String[] appList = {null, null, null, null};
 
     /**
      * Check this method later because of arithmetic errors
      * Determine region for app launching
+     *
+     * Annotations and rules: x left to right, y up to down
+     * |-------------|
+     * |-x, -y|+x, -y|
+     * |------|------|
+     * |-x, +y|+x, +y|
+     * |------|------|
+     *
      * @param x
      * @param y
      * @return
      */
-    public int checkRegion(int x, int y) {
-        if (x == 0) {
+    int checkRegion(int x, int y) {
+        if (x == 0 && y == 0) {
+            return NORTH;
+        } else if (x == 0) {
             if (y > 0) {
-                return EAST;
-            } else {
-                return WEST;
-            }
-        }
-        float gradient = Math.abs(y/x);
-        if (gradient >= 1) {
-            if (y > 0) {
-                return NORTH;
-            } else {
                 return SOUTH;
+            } else {
+                return NORTH;
             }
-        } else {
+        } else if (y == 0) {
             if (x > 0) {
                 return EAST;
             } else {
                 return WEST;
+            }
+        } else {
+            float gradient = Math.abs(y/x);
+            if (gradient >= 1) {
+                if (y > 0) {
+                    return SOUTH;
+                } else {
+                    return NORTH;
+                }
+            } else {
+                if (x > 0) {
+                    return EAST;
+                } else {
+                    return WEST;
+                }
             }
         }
     }
