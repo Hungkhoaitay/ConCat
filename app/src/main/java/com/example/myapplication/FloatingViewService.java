@@ -285,19 +285,23 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     switch (checkRegion(params.x, params.y)) {
                         case NORTH:
                             launchApp(appList[0]);
-                            Toast.makeText(getApplicationContext(), "Launch app 1", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Launch upwards " +
+                                    AppInfo.of(appList[0]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             break;
                         case SOUTH:
                             launchApp(appList[1]);
-                            Toast.makeText(getApplicationContext(), "Launch app 2", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Launch downwards " +
+                                    AppInfo.of(appList[1]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             break;
                         case EAST:
                             launchApp(appList[2]);
-                            Toast.makeText(getApplicationContext(), "Launch app 3", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Launch rightwards " +
+                                    AppInfo.of(appList[2]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             break;
                         case WEST:
                             launchApp(appList[3]);
-                            Toast.makeText(getApplicationContext(), "Launch app 4", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Launch leftwards " +
+                                    AppInfo.of(appList[3]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             break;
                     }
                     mWindowManager.removeView(mFloatingView);
