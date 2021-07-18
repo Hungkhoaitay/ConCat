@@ -6,26 +6,26 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/profile"
-            android:title="Profile">
+            android:title="@string/view_profile">
         </item>
     </group>
 
     <group>
         <item
             android:id="@+id/main_activity_screen"
-            android:title="Main Activity Screen">
+            android:title="@string/main_activity_screen">
         </item>
     </group>
     <group>
         <item
             android:id="@+id/customize_icon"
-            android:title="Customize Icon"/>
+            android:title="@string/customize_icon"/>
     </group>
 
     <group>
         <item
             android:id="@+id/settings"
-            android:title="Settings">
+            android:title="@string/settings">
         </item>
     </group>
 </menu>
