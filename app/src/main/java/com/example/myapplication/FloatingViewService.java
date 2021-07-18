@@ -142,7 +142,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
         }
         Intent intent = new Intent(getApplicationContext(), FloatingViewService.class);
         intent.putExtra("North", appList[0]);
-        // Log.i("TAG", hashMapNames.get(R.id.firstButton));
         intent.putExtra("South", appList[1]);
         intent.putExtra("East", appList[2]);
         intent.putExtra("West", appList[3]);
