@@ -1,72 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".MainActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity"
+    android:background="@drawable/ctr_bg">
 
-    <TextView
-        android:id="@+id/display"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp"
-        android:textSize="40sp"
-        android:textColor="@color/black"
-        android:text="Welcome!"/>
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/app_bar_height"
+        android:fitsSystemWindows="true"
+        android:background="@android:color/transparent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/display"
-        android:textSize="14sp"
-        android:textColor="@color/black"
-        android:text="Click and hold the buttons to customize your app!"/>
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/toolbar"
+            android:theme="@style/Theme.MyApplication.AppBarOverlay">
 
-    <Button
-        android:id="@+id/ConCat"
-        android:layout_width="@dimen/main_button_width"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/display"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:text="ConCat"
-        />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end">
 
-    <GridLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ConCat"
-        android:columnCount="2"
-        android:rowCount="2"
-        android:layout_marginTop="21dp"
-        android:layout_centerHorizontal="true"
-        android:useDefaultMargins="true">
-
-        <ImageView
-            android:id="@+id/firstButton"
-            android:layout_width="@dimen/row_height"
-            android:layout_height="@dimen/row_height" />
-
-        <ImageView
-            android:id="@+id/secondButton"
-            android:layout_width="@dimen/row_height"
-            android:layout_height="@dimen/row_height" />
-
-        <ImageView
-            android:id="@+id/thirdButton"
-            android:layout_width="@dimen/row_height"
-            android:layout_height="@dimen/row_height" />
-
-        <ImageView
-            android:id="@+id/fourthButton"
-            android:layout_width="@dimen/row_height"
-            android:layout_height="@dimen/row_height" />
-    </GridLayout>
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/loginBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:layout_anchor="@id/app_bar"
+                    app:srcCompat="@drawable/ic_round_person_24"
+                    app:fabSize="mini"/>
+            </LinearLayout>
 
 
-</RelativeLayout>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:showIn="@layout/activity_main"
+        android:background="@drawable/ns_bg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginVertical="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Apps"
+                    android:textSize="19dp"
+                    android:layout_marginVertical="16dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ConCat"
+                    android:orientation="vertical"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginVertical="16dp"
+                        android:showDividers="middle"
+                        android:divider="@drawable/empty_tall_divider">
+
+                        <ImageView
+                            android:id="@+id/firstButton"
+                            android:layout_width="@dimen/row_height"
+                            android:layout_height="@dimen/row_height" />
+
+                        <ImageView
+                            android:id="@+id/secondButton"
+                            android:layout_width="@dimen/row_height"
+                            android:layout_height="@dimen/row_height" />
+
+                        <ImageView
+                            android:id="@+id/thirdButton"
+                            android:layout_width="@dimen/row_height"
+                            android:layout_height="@dimen/row_height" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginVertical="16dp"
+                        android:showDividers="middle"
+                        android:divider="@drawable/empty_tall_divider">
+                        <ImageView
+                            android:id="@+id/fourthButton"
+                            android:layout_width="@dimen/row_height"
+                            android:layout_height="@dimen/row_height" />
+
+                        <ImageView
+                            android:id="@+id/fifthButton"
+                            android:layout_width="@dimen/row_height"
+                            android:layout_height="@dimen/row_height" />
+
+                        <ImageView
+                            android:id="@+id/sixthButton"
+                            android:layout_width="@dimen/row_height"
+                            android:layout_height="@dimen/row_height" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginVertical="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Launch ConCat"
+                    android:textSize="19dp"
+                    android:layout_marginVertical="16dp"/>
+
+                <Button
+                    android:id="@+id/ConCat"
+                    android:layout_width="@dimen/main_button_width"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/display"
+                    android:layout_centerHorizontal="true"
+                    android:text="ConCat"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginVertical="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="System"
+                    android:textSize="19dp"
+                    android:layout_marginVertical="16dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <Button
+                        android:id="@+id/systemBtn"
+                        android:layout_width="@dimen/main_button_width"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@android:drawable/ic_menu_search"
+                        android:text="System"/>
+
+                    <View
+                        android:layout_width="16dp"
+                        android:layout_height="0dp"/>
+
+                    <Button
+                        android:id="@+id/searchBtn"
+                        android:layout_width="@dimen/main_button_width"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@android:drawable/ic_menu_search"
+                        android:text="Search"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_baseline_timer_24"
+                android:drawableRight="@drawable/ic_baseline_keyboard_arrow_right_24"
+                android:gravity="left|center_vertical"
+                android:text="Most on-screen time apps"
+                android:layout_marginVertical="16dp"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
