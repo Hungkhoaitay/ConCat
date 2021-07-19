@@ -6,12 +6,8 @@
         "Material is the metaphor.\n\n"
     </string>
     <string name="action_settings">Settings</string>
-    <string name="select_action">Customize:</string>
-    <string name="open_setting">Settings</string>
-    <string name="launch_apps">Launch Apps</string>
-    <string name="north">North</string>
-    <string name="south">South</string>
-    <string name="west">West</string>
-    <string name="east">East</string>
-    <string name="tap_to_return">Tap anywhere else to return</string>
+    <string name="title_activity_settings">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>
