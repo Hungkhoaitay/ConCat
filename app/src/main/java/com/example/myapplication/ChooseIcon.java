@@ -12,10 +12,20 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import org.jetbrains.annotations.NotNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ChooseIcon extends Activity {
+
+    RecyclerView recyclerView;
+    GalleryImage adapter;
+    String[] name = {
+            "ConCat",
+            "Apple",
+            "Communism",
+            "Rick Ashley-sama"
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,5 +39,10 @@ public class ChooseIcon extends Activity {
                 finish();
             }
         });
+
+        recyclerView = findViewById(R.id.choose_icon_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new GalleryImage(this, name);
+        recyclerView.setAdapter(adapter);
     }
 }
