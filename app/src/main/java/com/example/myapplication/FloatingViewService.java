@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -55,14 +56,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
         super.onRebind(intent);
     }
 
-    /**
-     * mWindowManager: System service responsible for managing what is displayed
-     * and organized on the screen of the user.
-     * mFloatingView: Design, action, and algorithms relating to the floating widget
-     * collapsedView:
-     * expandedView:
-     */
-
     private WindowManager mWindowManager;
     private View mFloatingView;
     private View collapsedView;
@@ -78,12 +71,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
     }
 
-
-    private static final int NORTH = 1;
-    private static final int SOUTH = 2;
-    private static final int EAST = 3;
-    private static final int WEST = 4;
-
     private static final int REGION_1 = -1;
     private static final int REGION_2 = -2;
     private static final int REGION_3 = -3;
@@ -92,8 +79,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private static final int REGION_6 = 3;
 
 
-    // North, South, East, West
-    private String[] appList = {null, null, null, null};
+                                //one,   two, three, four, five, six
     private String[] newAppList = {null, null, null, null, null, null};
     /**
      * Check this method later because of arithmetic errors
@@ -110,18 +96,31 @@ public class FloatingViewService extends Service implements View.OnClickListener
      * @param y
      * @return
      */
-    Display display = mWindowManager.getDefaultDisplay();
-    final int WIDTH = display.getWidth();
-    final int HEIGHT = display.getHeight();
-
-    int f(int x, int y) {
-        float new_x = (float) x;
-        int result = (int) Math.abs(3 * (new_x + WIDTH/2)/WIDTH);
-        return y * result;
-    }
+    private float maxX;
+    private float minX;
+    private float maxY;
+    private float minY;
 
     int checkRegion(int x, int y) {
-        return f(x, y);
+        if (y < 0) {
+            if (x <= minX/3) {
+                Log.i("MIN X", minX/3 + "");
+                return REGION_1;
+            } else if (x > minX/3 && x < maxX/3) {
+                 return REGION_2;
+            } else {
+                Log.i("MAX X", maxX/3 + "");
+                return REGION_3;
+            }
+        } else {
+            if (x <= minX/3) {
+                return REGION_4;
+            } else if (x > minX/3 && x < maxX/3) {
+                return REGION_5;
+            } else {
+                return REGION_6;
+            }
+        }
     }
 
     private boolean checkIfMove(float dx, float dy, long t1, long t2) {
@@ -136,12 +135,12 @@ public class FloatingViewService extends Service implements View.OnClickListener
             manager.createNotificationChannel(channel);
         }
         Intent intent = new Intent(getApplicationContext(), FloatingViewService.class);
-        intent.putExtra("North", appList[0]);
-        intent.putExtra("South", appList[1]);
-        intent.putExtra("East", appList[2]);
-        intent.putExtra("West", appList[3]);
-
-        Log.i("", intent.getStringExtra("North"));
+        intent.putExtra("region 1", newAppList[0]);
+        intent.putExtra("region 2", newAppList[1]);
+        intent.putExtra("region 3", newAppList[2]);
+        intent.putExtra("region 4", newAppList[3]);
+        intent.putExtra("region 5", newAppList[4]);
+        intent.putExtra("region 6", newAppList[5]);
 
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Launch")
@@ -162,11 +161,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
         private float initialTouchY;
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            Display display = mWindowManager.getDefaultDisplay();
-            float maxX = (float) 0.5 * WIDTH;
-            float minX = -maxX;
-            float maxY = (float) 0.5 * HEIGHT;
-            float minY = -maxY;
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     initialX = params.x;
@@ -218,6 +212,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     initialTouchY = event.getRawY();
                     return true;
                 case MotionEvent.ACTION_MOVE:
+                    Log.i("", params.x + " " + params.y);
                     int xDiff = Math.round(event.getRawX() - initialTouchX);
                     int yDiff = Math.round(event.getRawY() - initialTouchY);
                     params.x = initialX + (int) xDiff;
@@ -225,27 +220,27 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     switch (checkRegion(params.x, params.y)) {
                         case REGION_1:
                             mFloatingView.findViewById(R.id.collapsed_iv).
-                                    setBackground(AppInfo.of(appList[0]).getIcon(getApplicationContext()));
+                                    setBackground(AppInfo.of(newAppList[0]).getIcon(getApplicationContext()));
                             break;
                         case REGION_2:
                             mFloatingView.findViewById(R.id.collapsed_iv).
-                                    setBackground(AppInfo.of(appList[1]).getIcon(getApplicationContext()));
+                                    setBackground(AppInfo.of(newAppList[1]).getIcon(getApplicationContext()));
                             break;
                         case REGION_3:
                             mFloatingView.findViewById(R.id.collapsed_iv).
-                                    setBackground(AppInfo.of(appList[2]).getIcon(getApplicationContext()));
+                                    setBackground(AppInfo.of(newAppList[2]).getIcon(getApplicationContext()));
                             break;
                         case REGION_4:
                             mFloatingView.findViewById(R.id.collapsed_iv).
-                                    setBackground(AppInfo.of(appList[3]).getIcon(getApplicationContext()));
+                                    setBackground(AppInfo.of(newAppList[3]).getIcon(getApplicationContext()));
                             break;
                         case REGION_5:
                             mFloatingView.findViewById(R.id.collapsed_iv).
-                                    setBackground(AppInfo.of(appList[4]).getIcon(getApplicationContext()));
+                                    setBackground(AppInfo.of(newAppList[4]).getIcon(getApplicationContext()));
                             break;
                         case REGION_6:
                             mFloatingView.findViewById(R.id.collapsed_iv).
-                                    setBackground(AppInfo.of(appList[5]).getIcon(getApplicationContext()));
+                                    setBackground(AppInfo.of(newAppList[5]).getIcon(getApplicationContext()));
                             break;
                         default:
                             break;
@@ -254,7 +249,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     return true;
                 case MotionEvent.ACTION_UP:
                     if (checkIfMove(params.x - initialX, params.y - initialY, event.getEventTime(), event.getDownTime())) {
-                        // Bind Service to General Movement and return back to previous state
                         v.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -269,32 +263,32 @@ public class FloatingViewService extends Service implements View.OnClickListener
                     switch (checkRegion(params.x, params.y)) {
                         case REGION_1:
                             launchApp(newAppList[0]);
-                            Toast.makeText(getApplicationContext(), "Launch upwards " +
+                            Toast.makeText(getApplicationContext(), "Launch " +
                                     AppInfo.of(newAppList[0]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             break;
                         case REGION_2:
                             launchApp(newAppList[1]);
-                            Toast.makeText(getApplicationContext(), "Launch upwards " +
+                            Toast.makeText(getApplicationContext(), "Launch " +
                                     AppInfo.of(newAppList[1]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             break;
                         case REGION_3:
                             launchApp(newAppList[2]);
-                            Toast.makeText(getApplicationContext(), "Launch upwards " +
+                            Toast.makeText(getApplicationContext(), "Launch " +
                                     AppInfo.of(newAppList[2]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             break;
                         case REGION_4:
                             launchApp(newAppList[3]);
-                            Toast.makeText(getApplicationContext(), "Launch upwards " +
+                            Toast.makeText(getApplicationContext(), "Launch " +
                                     AppInfo.of(newAppList[3]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             break;
                         case REGION_5:
                             launchApp(newAppList[4]);
-                            Toast.makeText(getApplicationContext(), "Launch upwards " +
+                            Toast.makeText(getApplicationContext(), "Launch " +
                                     AppInfo.of(newAppList[4]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             break;
                         case REGION_6:
                             launchApp(newAppList[5]);
-                            Toast.makeText(getApplicationContext(), "Launch upwards " +
+                            Toast.makeText(getApplicationContext(), "Launch " +
                                     AppInfo.of(newAppList[5]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             break;
                         default:
@@ -314,18 +308,21 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("ServiceDemo", "Service started");
         if (mFloatingView != null) {
             Toast.makeText(getApplicationContext(), "Widget is already created", Toast.LENGTH_SHORT).show();
             return super.onStartCommand(intent, flags, startId);
         }
 
         this.packageManager = getApplicationContext().getPackageManager();
-        this.appList[0] = intent.getStringExtra("North");
-        this.appList[1] = intent.getStringExtra("South");
-        this.appList[2] = intent.getStringExtra("East");
-        this.appList[3] = intent.getStringExtra("West");
-
+        this.newAppList[0] = intent.getStringExtra("region 1");
+        this.newAppList[1] = intent.getStringExtra("region 2");
+        this.newAppList[2] = intent.getStringExtra("region 3");
+        this.newAppList[3] = intent.getStringExtra("region 4");
+        this.newAppList[4] = intent.getStringExtra("region 5");
+        this.newAppList[5] = intent.getStringExtra("region 6");
+        for (int i = 0; i < 6; i++) {
+            Log.i("App packages: ", newAppList[i]);
+        }
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
         this.params = new WindowManager.LayoutParams(
@@ -339,14 +336,24 @@ public class FloatingViewService extends Service implements View.OnClickListener
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mWindowManager.addView(mFloatingView, params);
 
+        Display display = mWindowManager.getDefaultDisplay();
+        this.maxX = (float) 0.5 * display.getWidth();
+        this.minX = -maxX;
+        this.maxY = (float) 0.5 * display.getHeight();
+        this.minY = -maxY;
+        Log.i("", ""+  minX/3);
+
         // getting the collapsed and expanded view
-        collapsedView = mFloatingView.findViewById(R.id.layoutCollapsed);
-        expandedView = mFloatingView.findViewById(R.id.layoutExpanded);
+        this.collapsedView = mFloatingView.findViewById(R.id.layoutCollapsed);
+        this.expandedView = mFloatingView.findViewById(R.id.layoutExpanded);
 
         //adding click listener to close button and expanded view
         mFloatingView.findViewById(R.id.buttonClose).setOnClickListener(this);
         mFloatingView.findViewById(R.id.quickLaunch).setOnClickListener(this);
-        // mFloatingView.findViewById(R.id.returnToApp).setOnClickListener(this);
+        mFloatingView.findViewById(R.id.returnToApp).setOnClickListener(this);
+
+        Button returnToApp = (Button) mFloatingView.findViewById(R.id.returnToApp);
+        returnToApp.setText("Go to App");
         expandedView.setOnClickListener(this);
 
         mFloatingView.findViewById(R.id.relativeLayoutParent).setOnTouchListener(new NormalMovement());
@@ -392,14 +399,13 @@ public class FloatingViewService extends Service implements View.OnClickListener
                         setOnTouchListener(new LauncherMovement());
                 Toast.makeText(getApplicationContext(), "App launcher state entered",
                         Toast.LENGTH_SHORT).show();
-                break;/*
+                break;
             case R.id.returnToApp:
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
                 stopSelf();
                 break;
-                */
             case R.id.layoutExpanded:
                 setCollapsedView();
                 break;
@@ -407,10 +413,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 stopSelf();
                 createNotification();
                 break;
-            case R.id.firstButton:
-            case R.id.secondButton:
-            case R.id.thirdButton:
-            case R.id.fourthButton:
             default:
         }
     }
