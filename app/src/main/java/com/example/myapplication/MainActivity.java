@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.databinding.ActivityScrollingBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -27,6 +28,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,7 +42,7 @@ import static android.content.ContentValues.TAG;
 
  public class MainActivity extends AppCompatActivity {
 
-    final static int[] buttonIDs = new int[] { R.id.firstButton, R.id.secondButton, R.id.thirdButton, R.id.fourthButton };
+    final static int[] buttonIDs = new int[] { R.id.firstButton, R.id.secondButton, R.id.thirdButton, R.id.fourthButton, R.id.fifthButton, R.id.sixthButton };
     public static final String SHARED_PREFS = "sharedPrefs";
 
     private static final int WINDOW_PERMISSION = 123;
@@ -47,101 +50,45 @@ import static android.content.ContentValues.TAG;
 
     private SharedPreferences sharedPreferences;
 
-    private GoogleSignInClient mGoogleSignInClient;
-    private final static int RC_SIGN_IN = 19;
-    private FirebaseAuth mAuth;
     private FirebaseDatabase rootNode;
     private DatabaseReference reference;
-    private FirebaseUser user;
 
      @Override
      protected void onStart() {
          super.onStart();
 
-         user = mAuth.getCurrentUser();
+         // user = mAuth.getCurrentUser();
      }
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        // this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setContentView(R.layout.activity_main);
 
 //        rootNode = FirebaseDatabase.getInstance();
 //        reference = rootNode.getReference("user");
 //        reference.child(user.getUid());
 
-        createRequest();
-//        findViewById(R.id.ConCat).setOnClickListener(v -> signIn());
-//        mAuth = FirebaseAuth.getInstance();
-
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         loadData();
 
 //        Button conCat = findViewById(R.id.ConCat);
 //        conCat.setOnClickListener(this);
+
+         FloatingActionButton accountBtn = findViewById(R.id.accountBtn);
+         accountBtn.setOnClickListener(view -> {
+             Intent intent = new Intent(MainActivity.this, AccountActivity.class);
+             MainActivity.this.startActivity(intent);
+         });
+
+         Button customizeBtn = findViewById(R.id.customizeBtn);
+         customizeBtn.setOnClickListener(view -> {
+             Intent intent = new Intent(MainActivity.this, CustomizeActivity.class);
+             MainActivity.this.startActivity(intent);
+         });
     }
-
-     private void createRequest() {
-         // Configure Google Sign In
-         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                 .requestIdToken(getString(R.string.default_web_client_id))
-                 .requestEmail()
-                 .build();
-
-         // Build a GoogleSignInClient with the options specified by gso.
-         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-     }
-
-     private void signIn() {
-         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-         startActivityForResult(signInIntent, RC_SIGN_IN);
-     }
-
-     @Override
-     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-         super.onActivityResult(requestCode, resultCode, data);
-
-         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-         if (requestCode == RC_SIGN_IN) {
-             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-             try {
-                 // Google Sign In was successful, authenticate with Firebase
-                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-                 firebaseAuthWithGoogle(account.getIdToken());
-             } catch (ApiException e) {
-                 // Google Sign In failed, update UI appropriately
-                 Log.w(TAG, "Google sign in failed", e);
-             }
-         }
-     }
-
-     private void firebaseAuthWithGoogle(String idToken) {
-         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-         mAuth.signInWithCredential(credential)
-                 .addOnCompleteListener(this, task -> {
-                     if (task.isSuccessful()) {
-                         // Sign in success, update UI with the signed-in user's information
-                         Log.d(TAG, "signInWithCredential:success");
-                         user = mAuth.getCurrentUser();
-                         updateUI(user);
-                     } else {
-                         // If sign in fails, display a message to the user.
-                         Log.w(TAG, "signInWithCredential:failure", task.getException());
-                         updateUI(null);
-                     }
-                 });
-     }
-
-     private void updateUI(FirebaseUser user) {
-         if (user == null) {
-
-         } else {
-             Toast.makeText(this, "Hi " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-         }
-     }
 
      private void askForSystemOverlayPermission() {
         Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,

@@ -18,6 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
+        <activity
+            android:name=".CustomizeActivity"
+            android:label="In Manifest"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +34,15 @@
             android:label="replace"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.MyApplication.NoActionBar" />
+        <activity
+            android:name=".AccountActivity"
+            android:label="My Profile"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.MyApplication.NoActionBar" />
         <activity android:name=".MainActivity">
+
+        </activity>
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

@@ -2,12 +2,21 @@
     <string name="app_name">ConCat</string>
     <string name="app_not_found">App Not Found</string>
     <string name="title_activity_search">ScrollingActivity</string>
-    <string name="large_text">
-        "Material is the metaphor.\n\n"
+    <string name="title_activity_profile">Profile</string>
+    <string name="title_activity_account">AccountActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_settings">MainActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>
