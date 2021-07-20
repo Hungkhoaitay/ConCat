@@ -64,11 +64,12 @@
 
                 <Button
                     android:id="@+id/quickLaunch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="150dp"
+                    android:layout_height="75dp"
                     android:layout_below="@+id/select_action"
                     android:layout_centerHorizontal="true"
-                    android:text="@string/launch_apps" />
+                    android:text="@string/launch_apps"
+                    android:textSize="15sp"/>
 
                 <Button
                     android:id="@+id/returnToApp"
@@ -99,7 +100,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    android:visibility="gone"
                     android:divider="@drawable/empty_tall_divider"
                     android:gravity="center"
                     android:orientation="horizontal"
@@ -119,7 +120,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    android:visibility="gone"
                     android:divider="@drawable/empty_tall_divider"
                     android:gravity="center"
                     android:orientation="horizontal"
