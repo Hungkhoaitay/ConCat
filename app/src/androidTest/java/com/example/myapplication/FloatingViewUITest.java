@@ -37,9 +37,12 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
+/*
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+ */
 
 import java.util.concurrent.TimeoutException;
 
@@ -60,6 +63,25 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import androidx.test.filters.SdkSuppress;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject2;
+import androidx.test.uiautomator.Until;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
 /**
  * List of things needed to do an instrumented unit test on:
  * 1. Direction of floating widget determined by checkRegion
@@ -74,25 +96,15 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
  * https://androidx.de/androidx/test/rule/ServiceTestRule.html
  */
 @Ignore
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class FloatingViewUITest {
 
-
-    /*
     @Rule
-    public ServiceTestRule serviceTestRule = new ServiceTestRule();
-
-
-    @Before
-    public void setUp() throws TimeoutException {
-        this.floatingViewService = Robolectric.setupService(FloatingViewService.class);
-        MockitoAnnotations.initMocks(this);
-    }
-     */
+    ServiceTestRule serviceTestRule = new ServiceTestRule();
 
     @Before
     public void setup() {
-        MockitoAnnotations.openMocks(this);
+
     }
     /**
      * Assert that all specified component are visible and working
