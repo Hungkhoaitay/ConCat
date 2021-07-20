@@ -38,9 +38,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+/*
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+ */
 
 import java.util.List;
 import java.util.Random;
@@ -91,7 +94,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
  *
  * https://androidx.de/androidx/test/rule/ServiceTestRule.html
  */
-
+@Ignore
 @RunWith(AndroidJUnit4.class)
 public class FloatingViewServiceTest {
 
@@ -138,7 +141,6 @@ public class FloatingViewServiceTest {
 
         assertThat(fvs.expandedView.getVisibility()).isEqualTo(View.GONE);
         assertThat(fvs.collapsedView.getVisibility()).isEqualTo(View.VISIBLE);
-
          */
     }
 
