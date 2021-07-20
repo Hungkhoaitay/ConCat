@@ -5,7 +5,7 @@
     <dimen name="fab_margin">32dp</dimen>
     <dimen name="text_margin">32dp</dimen>
     <dimen name="row_height">64dp</dimen>
-    <dimen name="ns_bg_round">32dp</dimen>
+    <dimen name="ns_bg_round">16dp</dimen>
     <dimen name="row_text_size">19sp</dimen>
     <dimen name="main_button_width">190dp</dimen>
 </resources>
