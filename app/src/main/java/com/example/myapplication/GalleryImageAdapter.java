@@ -28,7 +28,7 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         protected final ImageView image;
-        public ViewHolder(@NonNull @NotNull View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
             this.image = itemView.findViewById(R.id.images);
         }

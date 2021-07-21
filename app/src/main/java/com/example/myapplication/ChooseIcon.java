@@ -44,9 +44,6 @@ public class ChooseIcon extends Activity {
         setContentView(R.layout.choose_icon);
 
         askPermission();
-
-        // getActionBar().setDisplayHomeAsUpEnabled(true);
-
         recyclerView = findViewById(R.id.choose_icon_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.setHasFixedSize(true);

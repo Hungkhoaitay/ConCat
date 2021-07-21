@@ -156,7 +156,7 @@
                         android:orientation="horizontal">
 
                         <Button
-                            android:id="@+id/systemBtn"
+                            android:id="@+id/ConCat"
                             android:layout_width="@dimen/main_button_width"
                             android:layout_height="wrap_content"
                             android:drawableTop="@drawable/ic_baseline_airplanemode_active_24"
@@ -191,7 +191,7 @@
                         android:textSize="19dp" />
 
                     <Button
-                        android:id="@+id/ConCat"
+                        android:id="@+id/systemBtn"
                         android:layout_width="@dimen/main_button_width"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/display"

@@ -1,10 +1,15 @@
 package com.example.myapplication;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -40,9 +45,18 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import static android.content.ContentValues.TAG;
 
- public class MainActivity extends AppCompatActivity {
+ public class MainActivity extends AppCompatActivity
+                                            implements View.OnClickListener {
 
-    final static int[] buttonIDs = new int[] { R.id.firstButton, R.id.secondButton, R.id.thirdButton, R.id.fourthButton, R.id.fifthButton, R.id.sixthButton };
+    final static int[] buttonIDs = new int[] {
+            R.id.firstButton,
+            R.id.secondButton,
+            R.id.thirdButton,
+            R.id.fourthButton,
+            R.id.fifthButton,
+            R.id.sixthButton
+    };
+
     public static final String SHARED_PREFS = "sharedPrefs";
 
     private static final int WINDOW_PERMISSION = 123;
@@ -74,8 +88,11 @@ import static android.content.ContentValues.TAG;
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         loadData();
 
-//        Button conCat = findViewById(R.id.ConCat);
-//        conCat.setOnClickListener(this);
+        Button conCat = findViewById(R.id.ConCat);
+        conCat.setOnClickListener(this);
+
+         Button customizeBtn = findViewById(R.id.customizeBtn);
+         customizeBtn.setOnClickListener(this);
 
          FloatingActionButton accountBtn = findViewById(R.id.accountBtn);
          accountBtn.setOnClickListener(view -> {
@@ -83,11 +100,6 @@ import static android.content.ContentValues.TAG;
              MainActivity.this.startActivity(intent);
          });
 
-         Button customizeBtn = findViewById(R.id.customizeBtn);
-         customizeBtn.setOnClickListener(view -> {
-             Intent intent = new Intent(MainActivity.this, CustomizeActivity.class);
-             MainActivity.this.startActivity(intent);
-         });
     }
 
      private void askForSystemOverlayPermission() {
@@ -99,31 +111,50 @@ import static android.content.ContentValues.TAG;
         }
     }
 
+     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+             new ActivityResultContracts.StartActivityForResult(),
+             new ActivityResultCallback<ActivityResult>() {
+                 @Override
+                 public void onActivityResult(ActivityResult result) {
+                     if (result.getResultCode() == Activity.RESULT_OK) {
+                         Intent i = result.getData();
+                         // handle the code here
+                     }
+                 }
+             });
 
-//    @Override
-//    public void onClick(View v) {
-//        TextView display = findViewById(R.id.display);
-//        switch (v.getId()) {
-//            case R.id.ConCat:
-//                if (PERMISSION_GRANTED == false) {
-//                    askForSystemOverlayPermission();
-//                    break;
-//                }
-//                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
-//                    Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
-//                    intent.putExtra("North", sharedPreferences.getString(Integer.toString(buttonIDs[0]), AppInfo.EMPTY));
-//                    intent.putExtra("South", sharedPreferences.getString(Integer.toString(buttonIDs[1]), AppInfo.EMPTY));
-//                    intent.putExtra("East", sharedPreferences.getString(Integer.toString(buttonIDs[2]), AppInfo.EMPTY));
-//                    intent.putExtra("West", sharedPreferences.getString(Integer.toString(buttonIDs[3]), AppInfo.EMPTY));
-//                    startService(intent);
-//                } else {
-//                    askForSystemOverlayPermission();
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//    }
+
+    @Override
+    public void onClick(View v) {
+        TextView display = findViewById(R.id.display);
+        switch (v.getId()) {
+            case R.id.ConCat:
+                Log.i("", "Launched");
+                if (PERMISSION_GRANTED == false) {
+                    askForSystemOverlayPermission();
+                    break;
+                }
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
+                    Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
+                    intent.putExtra("region 1", sharedPreferences.getString(Integer.toString(buttonIDs[0]), AppInfo.EMPTY));
+                    intent.putExtra("region 2", sharedPreferences.getString(Integer.toString(buttonIDs[1]), AppInfo.EMPTY));
+                    intent.putExtra("region 3", sharedPreferences.getString(Integer.toString(buttonIDs[2]), AppInfo.EMPTY));
+                    intent.putExtra("region 4", sharedPreferences.getString(Integer.toString(buttonIDs[3]), AppInfo.EMPTY));
+                    intent.putExtra("region 5", sharedPreferences.getString(Integer.toString(buttonIDs[4]), AppInfo.EMPTY));
+                    intent.putExtra("region 6", sharedPreferences.getString(Integer.toString(buttonIDs[5]), AppInfo.EMPTY));
+                    startService(intent);
+                } else {
+                    askForSystemOverlayPermission();
+                }
+                break;
+            case R.id.customizeBtn:
+                Intent intent = new Intent(this, ChooseIcon.class);
+                activityResultLauncher.launch(intent);
+                break;
+            default:
+                break;
+        }
+    }
 
      public void loadData() {
          for (int btnID: buttonIDs) {
