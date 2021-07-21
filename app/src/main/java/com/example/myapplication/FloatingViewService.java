@@ -57,12 +57,12 @@ public class FloatingViewService extends Service implements View.OnClickListener
     }
 
     private WindowManager mWindowManager;
-    private View mFloatingView;
-    private View collapsedView;
-    private View expandedView;
+    protected View mFloatingView;
+    protected View collapsedView;
+    protected View expandedView;
 
     private PackageManager packageManager;
-    private WindowManager.LayoutParams params;
+    protected WindowManager.LayoutParams params;
 
     private static final int CLICK_THRESHOLD = 150;
     private static final int LONG_CLICK_THRESHOLD = 1500;
@@ -320,9 +320,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
         this.newAppList[3] = intent.getStringExtra("region 4");
         this.newAppList[4] = intent.getStringExtra("region 5");
         this.newAppList[5] = intent.getStringExtra("region 6");
-        for (int i = 0; i < 6; i++) {
-            Log.i("App packages: ", newAppList[i]);
-        }
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
         this.params = new WindowManager.LayoutParams(

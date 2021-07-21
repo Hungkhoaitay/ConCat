@@ -128,8 +128,6 @@ public class FloatingViewServiceTest {
     @Test
     public void onCreateTest() throws TimeoutException {
         assertNotNull(fvs);
-
-        /*
         assertThat(fvs.mFloatingView).isNotNull();
         assertThat(fvs.mFloatingView).isInstanceOf(View.class);
         assertThat(fvs.mFloatingView.getVisibility()).isNotEqualTo(View.GONE);
@@ -141,7 +139,6 @@ public class FloatingViewServiceTest {
 
         assertThat(fvs.expandedView.getVisibility()).isEqualTo(View.GONE);
         assertThat(fvs.collapsedView.getVisibility()).isEqualTo(View.VISIBLE);
-         */
     }
 
     /**
@@ -163,6 +160,4 @@ public class FloatingViewServiceTest {
 
         assertThat(i).isNotNull();
     }
-
-
 }

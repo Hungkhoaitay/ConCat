@@ -42,7 +42,7 @@
             android:background="#a0cdd7"
             android:orientation="vertical"
             android:layout_alignParentBottom="true"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <RelativeLayout
                 android:id="@+id/buttonSimplifiedCoding"
