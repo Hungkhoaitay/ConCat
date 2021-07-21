@@ -25,25 +25,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ScrollingActivity"
             android:label="replace"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.MyApplication.NoActionBar" />
+
         <activity
             android:name=".AccountActivity"
             android:label="My Profile"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.MyApplication.NoActionBar" />
-        <activity android:name=".MainActivity">
 
-        </activity>
+        <activity android:name=".MainActivity"></activity>
+
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity android:name=".ChooseIcon"/>
+
 
         <service
             android:name=".FloatingViewService"

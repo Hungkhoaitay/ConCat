@@ -64,26 +64,12 @@ import static android.content.ContentValues.TAG;
 
     private SharedPreferences sharedPreferences;
 
-    private FirebaseDatabase rootNode;
-    private DatabaseReference reference;
-
-     @Override
-     protected void onStart() {
-         super.onStart();
-
-         // user = mAuth.getCurrentUser();
-     }
-
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         // this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setContentView(R.layout.activity_main);
-
-//        rootNode = FirebaseDatabase.getInstance();
-//        reference = rootNode.getReference("user");
-//        reference.child(user.getUid());
 
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         loadData();

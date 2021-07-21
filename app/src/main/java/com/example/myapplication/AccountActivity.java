@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,7 +35,7 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account);
+        setContentView(R.layout.test2);
 
         createRequest();
 
@@ -43,15 +44,14 @@ public class AccountActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        name = findViewById(R.id.usersName);
-        email = findViewById(R.id.usersEmail);
-        avatar = findViewById(R.id.usersAvatar);
+        name = findViewById(R.id.name_txt);
+        email = findViewById(R.id.email_txt);
+        avatar = findViewById(R.id.profile_image);
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (acct != null) {
             String personName = acct.getDisplayName();
             String personEmail = acct.getEmail();
-            String personId = acct.getId();
             Uri personPhoto = acct.getPhotoUrl();
 
             name.setText(personName);
@@ -59,13 +59,13 @@ public class AccountActivity extends AppCompatActivity {
             Glide.with(this).load(personPhoto).into(avatar);
         }
 
-        signOut = findViewById(R.id.logOut);
+        signOut = findViewById(R.id.sign_out_btn);
         signOut.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
                    switch (v.getId()) {
                        // ...
-                       case R.id.logOut:
+                       case R.id.sign_out_btn:
                            signOut();
                            break;
                        // ...
@@ -80,7 +80,8 @@ public class AccountActivity extends AppCompatActivity {
         mGoogleSignInClient.signOut()
             .addOnCompleteListener(this, task -> {
                 Toast.makeText(AccountActivity.this, "Signed out successfully!", Toast.LENGTH_LONG).show();
-                finish();
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
             });
     }
 

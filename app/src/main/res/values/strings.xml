@@ -17,4 +17,11 @@
     <string name="main_activity_screen">Main Activity Screen</string>
     <string name="customize_icon">Customize Icon</string>
     <string name="settings">Settings</string>
+
+    <string name="sign_in_with_google">Sign in With Google</string>
+    <string name="example">Example</string>
+    <string name="id">ID</string>
+    <string name="name">Name</string>
+    <string name="email_address">Email address</string>
+    <string name="sign_out">Sign out</string>
 </resources>
