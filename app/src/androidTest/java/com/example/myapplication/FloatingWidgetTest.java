@@ -96,7 +96,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
  */
 @Ignore
 @RunWith(AndroidJUnit4.class)
-public class FloatingViewServiceTest {
+public class FloatingWidgetTest {
 
     private Context context;
     private FloatingViewService fvs;

@@ -96,10 +96,10 @@ public class FloatingViewService extends Service implements View.OnClickListener
      * @param y
      * @return
      */
-    private float maxX;
-    private float minX;
-    private float maxY;
-    private float minY;
+    float maxX;
+    float minX;
+    float maxY;
+    float minY;
 
     int checkRegion(int x, int y) {
         if (y < 0) {
