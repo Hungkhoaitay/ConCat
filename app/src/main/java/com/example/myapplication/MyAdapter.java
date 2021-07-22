@@ -76,9 +76,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
             editor.putString(Integer.toString(buttonID), app.getName());
             editor.apply();
 
-            UserData userData = new UserData(this.context);
-            userData.sendData();
-
             c.startActivity(intent);
         });
     }
