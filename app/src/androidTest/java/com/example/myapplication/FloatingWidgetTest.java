@@ -94,6 +94,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
  *
  * https://androidx.de/androidx/test/rule/ServiceTestRule.html
  */
+
 @Ignore
 @RunWith(AndroidJUnit4.class)
 public class FloatingWidgetTest {
@@ -136,7 +137,6 @@ public class FloatingWidgetTest {
         assertThat(fvs.mFloatingView.getLayoutParams().width).isEqualTo(WindowManager.LayoutParams.WRAP_CONTENT);
         assertEquals(fvs.params.x, 0);
         assertEquals(fvs.params.y, 0);
-
         assertThat(fvs.expandedView.getVisibility()).isEqualTo(View.GONE);
         assertThat(fvs.collapsedView.getVisibility()).isEqualTo(View.VISIBLE);
     }

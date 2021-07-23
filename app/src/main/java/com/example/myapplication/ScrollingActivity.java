@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,7 +78,6 @@ public class ScrollingActivity extends AppCompatActivity
 
         applicationRecyclerView.setAdapter(myAdapter);
         applicationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
     }
 
     @Override
