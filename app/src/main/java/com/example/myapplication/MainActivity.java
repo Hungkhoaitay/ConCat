@@ -68,9 +68,6 @@ import static android.content.ContentValues.TAG;
     private static boolean PERMISSION_GRANTED = true;
 
     private SharedPreferences sharedPreferences;
-    
-     private DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-     private DatabaseReference mConditionRef = reference.child("condition");
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +76,8 @@ import static android.content.ContentValues.TAG;
         // this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setContentView(R.layout.activity_main);
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference mConditionRef = database.getReference("condition");
         mConditionRef.setValue("Hello123");
 
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
