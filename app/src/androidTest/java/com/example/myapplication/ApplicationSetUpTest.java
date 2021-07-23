@@ -27,6 +27,7 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.ext.truth.content.IntentSubject.assertThat;
 import androidx.test.core.app.ApplicationProvider;
@@ -60,7 +61,9 @@ import static android.os.Looper.getMainLooper;
 import static androidx.test.espresso.action.ViewActions.click;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -81,7 +84,10 @@ import androidx.test.filters.SdkSuppress;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObject2;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -89,7 +95,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-@Ignore
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 26)
@@ -124,13 +130,23 @@ public class ApplicationSetUpTest {
                 .getLaunchIntentForPackage(SAMPLE_PACKAGE);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);    // Clear out any previous instances
         context.startActivity(intent1);
-
         device.wait(Until.hasObject(By.pkg(SAMPLE_PACKAGE).depth(0)), LAUNCH_TIMEOUT);
     }
 
     // Confirm that application is launched on call
+    // confirm that splash screen is launched before main activity
     @Test
-    public void checkPreCondition() {
+    public void checkPreCondition() throws UiObjectNotFoundException {
         assertThat(device).isNotNull();
+        UiObject splash = device.findObject(new UiSelector().className(SplashScreen.class));
+        assertThat(splash).isNotNull();
+        UiObject mainActivity = device.findObject(new UiSelector()
+                .className(MainActivity.class));
+        mainActivity.waitForExists(2000);
+    }
+
+    @After
+    public void tearDown() {
+        activityTestRule.finishActivity();
     }
 }

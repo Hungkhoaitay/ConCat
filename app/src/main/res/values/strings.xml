@@ -24,4 +24,8 @@
     <string name="name">Name</string>
     <string name="email_address">Email address</string>
     <string name="sign_out">Sign out</string>
+
+    <string name="TOAST_STRING">
+        Empty Button! Hold to choose app
+    </string>
 </resources>
