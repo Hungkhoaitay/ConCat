@@ -53,6 +53,8 @@ public class AccountActivity extends AppCompatActivity {
             name.setText(personName);
             email.setText(personEmail);
             Glide.with(this).load(personPhoto).into(avatar);
+        } else {
+            Toast.makeText(this, "No account found", Toast.LENGTH_SHORT).show();
         }
 
         signOut = findViewById(R.id.sign_out_btn);
