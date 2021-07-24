@@ -59,7 +59,7 @@ public abstract class AppInfo implements Serializable {
             }
         }
 
-        private void launch(Context context) {
+        public void launch(Context context) {
             try {
                 context.startActivity(context.getPackageManager().getLaunchIntentForPackage(this.name));
             } catch (ActivityNotFoundException err) {
@@ -104,9 +104,7 @@ public abstract class AppInfo implements Serializable {
 
         @Override
         public void setButton(Context context, ImageView btn) {
-            btn.setOnClickListener(v -> {
-                Toast.makeText(context, "Empty Button! Hold to choose app", Toast.LENGTH_LONG).show();
-            });
+            btn.setOnClickListener(v -> this.launch(context));
 
             btn.setOnLongClickListener(v -> {
                 Intent intent = new Intent(context, ScrollingActivity.class);
@@ -121,6 +119,11 @@ public abstract class AppInfo implements Serializable {
         @Override
         public String getName() {
             return EMPTY;
+        }
+
+        @Override
+        public void launch(Context context) {
+            Toast.makeText(context, "Empty Button! Hold to choose app", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -185,4 +188,6 @@ public abstract class AppInfo implements Serializable {
      * @return the name of the app
      */
     public abstract String getName();
+
+    public abstract void launch(Context context);
 }

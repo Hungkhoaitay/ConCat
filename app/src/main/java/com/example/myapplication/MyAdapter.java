@@ -71,12 +71,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
 
             int buttonID = c.getIntent().getIntExtra("Button ID", 0);
 
-            SharedPreferences sharedPreferences = c.getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(Integer.toString(buttonID), app.getName());
-            editor.apply();
+            if (buttonID != 0) {
+                SharedPreferences sharedPreferences = c.getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(Integer.toString(buttonID), app.getName());
+                editor.apply();
 
-            c.startActivity(intent);
+                c.startActivity(intent);
+            } else {
+                app.launch(c);
+            }
         });
     }
 

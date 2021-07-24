@@ -30,7 +30,7 @@
             android:name=".ScrollingActivity"
             android:label="replace"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.MyApplication.NoActionBar" />
+            android:theme="@style/Theme.MyApplication.HaveActionBar" />
 
         <activity
             android:name=".AccountActivity"
@@ -38,7 +38,9 @@
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.MyApplication.NoActionBar" />
 
-        <activity android:name=".MainActivity"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/Theme.MyApplication.NoActionBar"></activity>
 
         <activity android:name=".LoginActivity">
             <intent-filter>
@@ -46,7 +48,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChooseIcon"/>
-
 
         <service
             android:name=".FloatingViewService"

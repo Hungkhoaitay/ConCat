@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -33,6 +35,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
@@ -72,8 +75,8 @@ import static android.content.ContentValues.TAG;
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        // this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setContentView(R.layout.activity_main);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -95,6 +98,22 @@ import static android.content.ContentValues.TAG;
          Button systemBtn = findViewById(R.id.systemBtn);
          systemBtn.setOnClickListener(this);
 
+         ExtendedFloatingActionButton searchAppBtn = findViewById(R.id.searchAppBtn);
+         accountBtn.setOnClickListener(this);
+
+         NestedScrollView scrollView = findViewById(R.id.scrollView);
+         scrollView.getViewTreeObserver()
+                 .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+                     @Override
+                     public void onScrollChanged() {
+                         if (scrollView.getChildAt(0).getBottom()
+                                 <= (scrollView.getHeight() + scrollView.getScrollY())) {
+                             searchAppBtn.setVisibility(View.INVISIBLE);
+                         } else {
+                              searchAppBtn.setVisibility(View.VISIBLE);
+                         }
+                     }
+                 });
     }
 
      @Override
@@ -169,6 +188,9 @@ import static android.content.ContentValues.TAG;
                 MainActivity.this.startActivity(intent1);
             case R.id.systemBtn:
 
+            case R.id.searchAppBtn:
+                Intent intent2 = new Intent(MainActivity.this, ScrollingActivity.class);
+                MainActivity.this.startActivity(intent2);
             default:
                 break;
         }
