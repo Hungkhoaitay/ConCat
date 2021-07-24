@@ -28,14 +28,16 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.myapplication.MainActivity.buttonIDs;
 
 public class UserData {
-    private Buttons buttons;
+    private Buttons button;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String userID;
 
     private class Buttons {
         private String[] buttons;
 
-        private Buttons(String[] buttons) {
+        private Buttons() {
+            String[] buttons = new String[6];
+            Arrays.fill(buttons, AppInfo.EMPTY);
             this.buttons = buttons;
         }
 
@@ -44,8 +46,6 @@ public class UserData {
         }
 
         private void set(AppCompatActivity ac) {
-
-            Log.d(TAG, buttons.toString());
             for (int i = 0; i < MainActivity.NUMBER_OF_BUTTONS; i++) {
                 AppInfo.of(buttons[i]).setButton(ac, ac.findViewById(buttonIDs[i]), i);
             }
@@ -67,36 +67,32 @@ public class UserData {
 
         private void update() {
             DocumentReference docRef = db.collection(userID).document("buttons");
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    Map<String, Object> has = documentSnapshot.getData();
-                    for (int i = 0; i < MainActivity.NUMBER_OF_BUTTONS; i++) {
-                        buttons[i] = Optional.of((String) has.get(Integer.toString(i))).orElse(AppInfo.EMPTY);
-                    }
+            docRef.get().addOnSuccessListener(documentSnapshot -> {
+                Map<String, Object> has = documentSnapshot.getData();
+                for (int i = 0; i < MainActivity.NUMBER_OF_BUTTONS; i++) {
+                    this.buttons[i] = Optional.of((String) has.get(Integer.toString(i))).orElse(AppInfo.EMPTY);
+                    Log.d(TAG, "heelo" + buttons[i]);
                 }
             });
         }
     }
 
     public UserData() {
-        String[] buttons = new String[6];
-        Arrays.fill(buttons, AppInfo.EMPTY);
-        this.buttons = new Buttons(buttons);
+        this.button = new Buttons();
     }
 
     public static UserData USERDATA = new UserData();
 
     public void updateButton(int pos, String appName) {
-        this.buttons.updateButton(pos, appName);
+        this.button.updateButton(pos, appName);
     }
 
     public void set(AppCompatActivity ac) {
-        this.buttons.set(ac);
+        this.button.set(ac);
     }
 
     public void sendData() {
-        this.buttons.sendData();
+        this.button.sendData();
     }
 
     public void clean() {
@@ -105,6 +101,6 @@ public class UserData {
 
     public void update(FirebaseUser user) {
         userID = user.getUid();
-        this.buttons.update();
+        this.button.update();
     }
 }
