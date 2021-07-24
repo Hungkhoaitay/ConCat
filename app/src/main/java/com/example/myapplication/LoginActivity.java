@@ -32,7 +32,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Log.d("First: ", "First");
         createRequest();
         findViewById(R.id.sign_in_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,7 +39,6 @@ public class LoginActivity extends AppCompatActivity {
                 switch (v.getId()) {
                     case R.id.sign_in_btn:
                         signIn();
-                        Log.d("Second: ", "Second");
                         break;
                     // ...
                 }
@@ -54,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
-            Log.d("Third: ", "Third");
             signIn();
         }
         // updateUI(account);
@@ -62,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void createRequest() {
         // Configure Google Sign In
-        Log.d("Fourth", "Fourth");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -75,7 +71,6 @@ public class LoginActivity extends AppCompatActivity {
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
-        Log.d("Fifth", "Fifth");
     }
 
     @Override
@@ -84,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            Log.d(TAG, "why?");
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
 
@@ -102,8 +96,7 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Alternative to the below code:
-     * Intent intent = new Intent(this, MainActivity.class);
-     *             startActivity(intent);
+     *
      * @param completedTask
      */
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -111,7 +104,8 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             // API Exception Error
             // Signed in successfully, show authenticated UI.
-            Log.d(TAG, "why?");
+            user = mAuth.getCurrentUser();
+            updateUI(user);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } catch (ApiException e) {
@@ -129,22 +123,19 @@ public class LoginActivity extends AppCompatActivity {
 //                        // Sign in success, update UI with the signed-in user's information
 //                        Log.d(TAG, "signInWithCredential:success");
 //                        user = mAuth.getCurrentUser();
-//                        updateUI(user);
+            //            updateUI(user);
+            //            Intent intent = new Intent(this, MainActivity.class);
+            //            startActivity(intent);
 //                    } else {
 //                        // If sign in fails, display a message to the user.
 //                        Log.w(TAG, "signInWithCredential:failure", task.getException());
-//                        updateUI(null);
 //                    }
 //                });
 //    }
 
-    private void updateUI() {
-        if (user == null) {
-
-        } else {
-
-        }
+    private void updateUI(FirebaseUser user) {
+        UserData.USERDATA.clean();
+        UserData.USERDATA.update(user);
     }
-
 }
 

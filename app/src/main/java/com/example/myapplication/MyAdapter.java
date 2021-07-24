@@ -37,7 +37,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
     private Context context;
     private List<AppInfo> appInfos;
     private List<AppInfo> appInfosFull;
-    private int buttonID;
+    private int buttonPos;
     private Intent intent;
 
     public MyAdapter(Context c, List<AppInfo> appInfos) {
@@ -45,7 +45,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
         this.appInfos = appInfos;
         this.appInfosFull = new ArrayList<>(appInfos);
         AppCompatActivity ac = (AppCompatActivity) context;
-        buttonID = ac.getIntent().getIntExtra("Button ID", 0);
+        buttonPos = ac.getIntent().getIntExtra("Button Pos", -1);
         intent = new Intent(context, MainActivity.class);
     }
 
@@ -70,13 +70,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
         holder.icon.setImageDrawable(app.getIcon(this.context));
 
         holder.rowLayout.setOnClickListener(v -> {
-            if (buttonID != 0) {
-                SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(Integer.toString(buttonID), app.getName());
-                editor.apply();
-
+            if (buttonPos != -1) {
+                UserData.USERDATA.updateButton(buttonPos, app.getName());
                 context.startActivity(intent);
+                UserData.USERDATA.sendData();
             } else {
                 app.launch(context);
             }
