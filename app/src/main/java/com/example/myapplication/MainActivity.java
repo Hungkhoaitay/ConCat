@@ -34,6 +34,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -45,6 +47,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
@@ -74,9 +79,29 @@ import static android.content.ContentValues.TAG;
 //         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setContentView(R.layout.activity_main);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mConditionRef = database.getReference("condition");
-        mConditionRef.setValue("Hello123");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+         // Create a new user with a first and last name
+         Map<String, Object> user = new HashMap<>();
+         user.put("first", "Ada");
+         user.put("last", "Lovelace");
+         user.put("born", 1815);
+
+// Add a new document with a generated ID
+         db.collection("users")
+                 .add(user)
+                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                     @Override
+                     public void onSuccess(DocumentReference documentReference) {
+                         Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                     }
+                 })
+                 .addOnFailureListener(new OnFailureListener() {
+                     @Override
+                     public void onFailure(@NonNull Exception e) {
+                         Log.w(TAG, "Error adding document", e);
+                     }
+                 });
 
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         loadData();
@@ -114,6 +139,19 @@ import static android.content.ContentValues.TAG;
      @Override
      protected void onStart() {
          super.onStart();
+         
+//         mConditionRef.addValueEventListener(new ValueEventListener() {
+//             @Override
+//             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//                 String text = snapshot.getValue(String.class);
+//                 Toast.makeText(MainActivity.this, "It is work", Toast.LENGTH_SHORT).show();
+//             }
+//
+//             @Override
+//             public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//
+//             }
+//         });
      }
 
      private void askForSystemOverlayPermission() {
@@ -170,6 +208,8 @@ import static android.content.ContentValues.TAG;
                 MainActivity.this.startActivity(intentAccount);
                 break;
             case R.id.MOSABtn:
+//                Intent intentMOSA = new Intent(MainActivity.this, MostOnScreenApps.class);
+//                MainActivity.this.startActivity(intentMOSA);
                 Intent intentMOSA = new Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);
                 MainActivity.this.startActivity(intentMOSA);
                 break;

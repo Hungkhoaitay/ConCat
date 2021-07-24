@@ -125,4 +125,11 @@ public class MainActivityTest {
         onView(withId(R.id.app_bar)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void appInfoTest() {
+        assertEquals(AppInfo.of("com.reddit.frontpage")
+                .getLabel(mActivityTestRule.getActivity().getApplicationContext()),
+                "Reddit");
+    }
+
 }
