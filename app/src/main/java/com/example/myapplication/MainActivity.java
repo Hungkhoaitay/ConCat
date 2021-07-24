@@ -75,7 +75,7 @@ import static android.content.ContentValues.TAG;
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 //         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setContentView(R.layout.activity_main);
 
@@ -101,17 +101,17 @@ import static android.content.ContentValues.TAG;
          ExtendedFloatingActionButton searchAppBtn = findViewById(R.id.searchAppBtn);
          searchAppBtn.setOnClickListener(this);
 
+         Button MOSABtn = findViewById(R.id.MOSABtn);
+         MOSABtn.setOnClickListener(this);
+
          NestedScrollView scrollView = findViewById(R.id.scrollView);
          scrollView.getViewTreeObserver()
-                 .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-                     @Override
-                     public void onScrollChanged() {
-                         if (scrollView.getChildAt(0).getBottom()
-                                 <= (scrollView.getHeight() + scrollView.getScrollY())) {
-                             searchAppBtn.setVisibility(View.INVISIBLE);
-                         } else {
-                              searchAppBtn.setVisibility(View.VISIBLE);
-                         }
+                 .addOnScrollChangedListener(() -> {
+                     if (scrollView.getChildAt(0).getBottom()
+                             <= (scrollView.getHeight() + scrollView.getScrollY())) {
+                         searchAppBtn.setVisibility(View.INVISIBLE);
+                     } else {
+                          searchAppBtn.setVisibility(View.VISIBLE);
                      }
                  });
     }
@@ -184,14 +184,23 @@ import static android.content.ContentValues.TAG;
                 activityResultLauncher.launch(intent);
                 break;
             case R.id.accountBtn:
-                Intent intent1 = new Intent(MainActivity.this, AccountActivity.class);
-                MainActivity.this.startActivity(intent1);
-            case R.id.systemBtn:
-
+                Intent intentAccount = new Intent(MainActivity.this, AccountActivity.class);
+                MainActivity.this.startActivity(intentAccount);
+                break;
+            case R.id.MOSABtn:
+//                Intent intentMOSA = new Intent(MainActivity.this, MostOnScreenApps.class);
+//                MainActivity.this.startActivity(intentMOSA);
+                Intent intentMOSA = new Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);
+                MainActivity.this.startActivity(intentMOSA);
+                break;
             case R.id.searchAppBtn:
-                Toast.makeText(this, "click", Toast.LENGTH_SHORT).show();
-                Intent intent2 = new Intent(MainActivity.this, ScrollingActivity.class);
-                MainActivity.this.startActivity(intent2);
+                Intent intentSearchApp = new Intent(MainActivity.this, ScrollingActivity.class);
+                MainActivity.this.startActivity(intentSearchApp);
+                break;
+            case R.id.systemBtn:
+//                Intent intentSystem = new Intent(Settings.ACTION_APP_SEARCH_SETTINGS);
+//                MainActivity.this.startActivity(intentSystem);
+                break;
             default:
                 break;
         }
