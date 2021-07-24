@@ -1,5 +1,10 @@
 package com.example.myapplication;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.Instrumentation;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.Manifest;
 import android.app.Service;
@@ -34,12 +39,18 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Order;
 import org.junit.runner.RunWith;
 
+import java.util.List;
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.longClick;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.Intents.intending;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.isInternal;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
@@ -53,6 +64,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
@@ -197,6 +209,7 @@ public class FloatingWidgetComponentTesting {
         close.click();
     }
 
+    @Ignore
     @Test
     public void movementTest() {
         int width = device.getDisplayWidth();
@@ -221,31 +234,57 @@ public class FloatingWidgetComponentTesting {
                         .getWindow().getDecorView())))).perform(click());
     }
 
+
     @Test
-    public void launcherTest() {
+    public void chooserTestIntegration() {
         onView(withId(R.id.firstButton)).perform(longClick());
+        // Youtube
         onView(withId(R.id.applicationRecyclerView)).perform(
-                RecyclerViewActions.actionOnItemAtPosition(0, click())
+                RecyclerViewActions.actionOnItemAtPosition(1, click())
         );
         onView(withId(R.id.secondButton)).perform(longClick());
         onView(withId(R.id.applicationRecyclerView)).perform(
-                RecyclerViewActions.actionOnItemAtPosition(10, click())
+                RecyclerViewActions.actionOnItemAtPosition(13, scrollTo())
         );
-        onView(withId(R.id.thirdButton)).perform(longClick());
+        // Whatsapp
         onView(withId(R.id.applicationRecyclerView)).perform(
-                RecyclerViewActions.actionOnItemAtPosition(20, click())
+                RecyclerViewActions.actionOnItemAtPosition(13, click())
+        );
+
+        onView(withId(R.id.thirdButton)).perform(longClick());
+        // Google Play
+        onView(withId(R.id.applicationRecyclerView)).perform(
+                RecyclerViewActions.actionOnItemAtPosition(25, scrollTo())
+        );
+        onView(withId(R.id.applicationRecyclerView)).perform(
+                RecyclerViewActions.actionOnItemAtPosition(25, click())
         );
         onView(withId(R.id.fourthButton)).perform(longClick());
+        onView(withId(R.id.applicationRecyclerView)).perform(
+                RecyclerViewActions.actionOnItemAtPosition(30, scrollTo())
+        );
+        // Instagram
         onView(withId(R.id.applicationRecyclerView)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(30, click())
         );
         onView(withId(R.id.fifthButton)).perform(longClick());
+
+        onView(withId(R.id.applicationRecyclerView)).perform(
+                RecyclerViewActions.actionOnItemAtPosition(40, scrollTo())
+        );
+        // Google Map
         onView(withId(R.id.applicationRecyclerView)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(40, click())
         );
         onView(withId(R.id.sixthButton)).perform(longClick());
+
+        onView(withId(R.id.applicationRecyclerView)).perform(
+                RecyclerViewActions.actionOnItemAtPosition(50, scrollTo())
+        );
+        // Netflix
         onView(withId(R.id.applicationRecyclerView)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(50, click())
         );
     }
+
 }
