@@ -99,7 +99,7 @@ import static android.content.ContentValues.TAG;
          systemBtn.setOnClickListener(this);
 
          ExtendedFloatingActionButton searchAppBtn = findViewById(R.id.searchAppBtn);
-         accountBtn.setOnClickListener(this);
+         searchAppBtn.setOnClickListener(this);
 
          NestedScrollView scrollView = findViewById(R.id.scrollView);
          scrollView.getViewTreeObserver()
@@ -189,6 +189,7 @@ import static android.content.ContentValues.TAG;
             case R.id.systemBtn:
 
             case R.id.searchAppBtn:
+                Toast.makeText(this, "click", Toast.LENGTH_SHORT).show();
                 Intent intent2 = new Intent(MainActivity.this, ScrollingActivity.class);
                 MainActivity.this.startActivity(intent2);
             default:

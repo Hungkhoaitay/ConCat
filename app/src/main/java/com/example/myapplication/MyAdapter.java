@@ -37,11 +37,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
     private Context context;
     private List<AppInfo> appInfos;
     private List<AppInfo> appInfosFull;
+    private int buttonID;
+    private Intent intent;
 
     public MyAdapter(Context c, List<AppInfo> appInfos) {
         this.context = c;
         this.appInfos = appInfos;
         this.appInfosFull = new ArrayList<>(appInfos);
+        AppCompatActivity ac = (AppCompatActivity) context;
+        buttonID = ac.getIntent().getIntExtra("Button ID", 0);
+        intent = new Intent(context, MainActivity.class);
     }
 
     @NonNull
@@ -64,22 +69,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
         holder.title.setText(app.getLabel(this.context));
         holder.icon.setImageDrawable(app.getIcon(this.context));
 
-
         holder.rowLayout.setOnClickListener(v -> {
-            AppCompatActivity c = (AppCompatActivity) context;
-            Intent intent = new Intent(c, MainActivity.class);
-
-            int buttonID = c.getIntent().getIntExtra("Button ID", 0);
-
             if (buttonID != 0) {
-                SharedPreferences sharedPreferences = c.getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
+                SharedPreferences sharedPreferences = context.getSharedPreferences(MainActivity.SHARED_PREFS, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(Integer.toString(buttonID), app.getName());
                 editor.apply();
 
-                c.startActivity(intent);
+                context.startActivity(intent);
             } else {
-                app.launch(c);
+                app.launch(context);
             }
         });
     }
