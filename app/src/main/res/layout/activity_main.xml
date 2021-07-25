@@ -34,6 +34,7 @@
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/accountBtn"
+                    android:contentDescription="Account"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
@@ -84,7 +85,6 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/ConCat"
                         android:orientation="vertical">
 
                         <LinearLayout
@@ -97,16 +97,19 @@
                             android:showDividers="middle">
 
                             <ImageView
+                                android:contentDescription="First Button"
                                 android:id="@+id/firstButton"
                                 android:layout_width="@dimen/row_height"
                                 android:layout_height="@dimen/row_height" />
 
                             <ImageView
+                                android:contentDescription="Second Button"
                                 android:id="@+id/secondButton"
                                 android:layout_width="@dimen/row_height"
                                 android:layout_height="@dimen/row_height" />
 
                             <ImageView
+                                android:contentDescription="Third Button"
                                 android:id="@+id/thirdButton"
                                 android:layout_width="@dimen/row_height"
                                 android:layout_height="@dimen/row_height" />
@@ -122,21 +125,25 @@
                             android:showDividers="middle">
 
                             <ImageView
+                                android:contentDescription="Fourth Button"
                                 android:id="@+id/fourthButton"
                                 android:layout_width="@dimen/row_height"
                                 android:layout_height="@dimen/row_height" />
 
                             <ImageView
+                                android:contentDescription="Fifth Button"
                                 android:id="@+id/fifthButton"
                                 android:layout_width="@dimen/row_height"
                                 android:layout_height="@dimen/row_height" />
 
                             <ImageView
+                                android:contentDescription="Sixth Button"
                                 android:id="@+id/sixthButton"
                                 android:layout_width="@dimen/row_height"
                                 android:layout_height="@dimen/row_height" />
                         </LinearLayout>
                     </LinearLayout>
+
                 </LinearLayout>
 
                 <LinearLayout

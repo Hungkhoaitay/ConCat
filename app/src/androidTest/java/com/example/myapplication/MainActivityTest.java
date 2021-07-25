@@ -145,8 +145,8 @@ public class MainActivityTest {
     public void activityScenario4() {
         onView(withId(R.id.customizeBtn)).check(matches(isDisplayed()));
         onView(withId(R.id.customizeBtn)).perform(click());
-        onView(withId(R.id.button_fragment)).check(matches(isDisplayed()));
-        onView(withId(R.id.button_fragment)).perform(click());
+        onView(withId(R.id.cancel_selection)).check(matches(isDisplayed()));
+        onView(withId(R.id.cancel_selection)).perform(click());
         onView(withId(R.id.app_bar)).check(matches(isDisplayed()));
     }
 

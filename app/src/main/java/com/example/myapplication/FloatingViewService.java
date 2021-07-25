@@ -286,10 +286,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 PixelFormat.TRANSLUCENT
         );
 
-        Log.d("Current background: ", background);
-        for (int i = 0; i < 6; i++) {
-            Log.d("", newAppList[i]);
-        }
+
         if (background.equals(DEFAULT_VALUE)) {
             mFloatingView.findViewById(R.id.collapsed_iv)
                     .setBackgroundResource(R.drawable.concat);
@@ -317,6 +314,25 @@ public class FloatingViewService extends Service implements View.OnClickListener
         mFloatingView.findViewById(R.id.buttonClose).setOnClickListener(this);
         mFloatingView.findViewById(R.id.quickLaunch).setOnClickListener(this);
         mFloatingView.findViewById(R.id.returnToApp).setOnClickListener(this);
+
+        mFloatingView.findViewById(R.id.button_one).setBackground(
+                AppInfo.of(newAppList[0]).getIcon(getApplicationContext())
+        );
+        mFloatingView.findViewById(R.id.button_two).setBackground(
+                AppInfo.of(newAppList[1]).getIcon(getApplicationContext())
+        );
+        mFloatingView.findViewById(R.id.button_three).setBackground(
+                AppInfo.of(newAppList[2]).getIcon(getApplicationContext())
+        );
+        mFloatingView.findViewById(R.id.button_four).setBackground(
+                AppInfo.of(newAppList[3]).getIcon(getApplicationContext())
+        );
+        mFloatingView.findViewById(R.id.button_five).setBackground(
+                AppInfo.of(newAppList[4]).getIcon(getApplicationContext())
+        );
+        mFloatingView.findViewById(R.id.button_six).setBackground(
+                AppInfo.of(newAppList[5]).getIcon(getApplicationContext())
+        );
 
         Button returnToApp = (Button) mFloatingView.findViewById(R.id.returnToApp);
         returnToApp.setText("Go to App");

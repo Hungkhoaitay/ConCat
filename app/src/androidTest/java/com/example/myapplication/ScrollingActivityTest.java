@@ -114,9 +114,7 @@ public class ScrollingActivityTest {
         activityTestRule.launchActivity(null);
     }
 
-    public static Matcher<View> withDrawable(Drawable drawable) {
-        return new ImageMatcher(drawable);
-    }
+
 
     // Test integration with MainActivity
     @Test

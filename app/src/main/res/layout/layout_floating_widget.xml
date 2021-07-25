@@ -24,6 +24,7 @@
             android:visibility="visible">
 
             <ImageView
+                android:contentDescription="Customized Widget"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_marginTop="8dp"
@@ -39,15 +40,15 @@
         </RelativeLayout>
 
         <!-- This is the expanded layout -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="600dp"
             android:contentDescription="Expanded Layout"
             android:id="@+id/layoutExpanded"
             android:background="#a0cdd7"
             android:orientation="vertical"
             android:layout_alignParentBottom="true"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <RelativeLayout
                 android:id="@+id/buttonSimplifiedCoding"
@@ -79,6 +80,7 @@
 
                 <Button
                     android:id="@+id/returnToApp"
+                    android:contentDescription="Return to App"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/quickLaunch"
@@ -86,39 +88,32 @@
             </RelativeLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginBottom="192dp"
-                android:background="@android:color/holo_blue_dark"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent"
-                android:divider="@drawable/empty_horizontal_divider"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:showDividers="middle">
+                android:id="@+id/instructions"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:layout_marginVertical="16dp"
                     android:divider="@drawable/empty_tall_divider"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:showDividers="middle">
 
                     <ImageView
-                        android:id="@+id/first_button"
+                        android:id="@+id/button_one"
                         android:layout_width="@dimen/row_height"
                         android:layout_height="@dimen/row_height" />
 
                     <ImageView
-                        android:id="@+id/second_button"
+                        android:id="@+id/button_two"
+                        android:layout_width="@dimen/row_height"
+                        android:layout_height="@dimen/row_height" />
+
+                    <ImageView
+                        android:id="@+id/button_three"
                         android:layout_width="@dimen/row_height"
                         android:layout_height="@dimen/row_height" />
                 </LinearLayout>
@@ -126,24 +121,28 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:layout_marginVertical="16dp"
                     android:divider="@drawable/empty_tall_divider"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:showDividers="middle">
 
                     <ImageView
-                        android:id="@+id/third_button"
+                        android:id="@+id/button_four"
                         android:layout_width="@dimen/row_height"
                         android:layout_height="@dimen/row_height" />
 
                     <ImageView
-                        android:id="@+id/fourth_button"
+                        android:id="@+id/button_five"
                         android:layout_width="@dimen/row_height"
                         android:layout_height="@dimen/row_height" />
 
+                    <ImageView
+                        android:id="@+id/button_six"
+                        android:layout_width="@dimen/row_height"
+                        android:layout_height="@dimen/row_height" />
                 </LinearLayout>
             </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </RelativeLayout>
 </FrameLayout>
