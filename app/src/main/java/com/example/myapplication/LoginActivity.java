@@ -104,8 +104,8 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             // API Exception Error
             // Signed in successfully, show authenticated UI.
-            user = mAuth.getCurrentUser();
-            updateUI(user);
+            // String userID = mAuth.getCurrentUser().getUid();
+            updateUI(account.getId());
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         } catch (ApiException e) {
@@ -133,9 +133,10 @@ public class LoginActivity extends AppCompatActivity {
 //                });
 //    }
 
-    private void updateUI(FirebaseUser user) {
+    private void updateUI(String user) {
+        Log.d(TAG, "heello" + user);
         UserData.USERDATA.clean();
-        UserData.USERDATA.update(user);
+//        UserData.USERDATA.update(user);
     }
 }
 

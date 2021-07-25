@@ -143,6 +143,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
         intent.putExtra("region 6", newAppList[5]);
 
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Launch")
                 .setSmallIcon(R.drawable.concat)
                 .setContentTitle("To relaunch application")
@@ -255,6 +256,9 @@ public class FloatingViewService extends Service implements View.OnClickListener
                                 params.x = 0;
                                 mFloatingView.findViewById(R.id.relativeLayoutParent).
                                         setOnTouchListener(new NormalMovement());
+                                mFloatingView.findViewById(R.id.collapsed_iv).setBackgroundResource(R.drawable.concat);
+                                Toast.makeText(getApplicationContext(), "App launcher state exited", Toast.LENGTH_SHORT)
+                                        .show();
                             }
                         });
                         v.performClick();

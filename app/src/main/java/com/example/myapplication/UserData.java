@@ -70,7 +70,8 @@ public class UserData {
             docRef.get().addOnSuccessListener(documentSnapshot -> {
                 Map<String, Object> has = documentSnapshot.getData();
                 for (int i = 0; i < MainActivity.NUMBER_OF_BUTTONS; i++) {
-                    this.buttons[i] = Optional.of((String) has.get(Integer.toString(i))).orElse(AppInfo.EMPTY);
+                    this.buttons[i] = Optional.of((String)
+                            has.get(Integer.toString(i))).orElse(AppInfo.EMPTY);
                     Log.d(TAG, "heelo" + buttons[i]);
                 }
             });
@@ -99,8 +100,8 @@ public class UserData {
         USERDATA = new UserData();
     }
 
-    public void update(FirebaseUser user) {
-        userID = user.getUid();
+    public void update(String userID) {
+        this.userID = userID;
         this.button.update();
     }
 }

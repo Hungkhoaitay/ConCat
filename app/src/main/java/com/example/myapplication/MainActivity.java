@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static android.content.ContentValues.TAG;
 
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int WINDOW_PERMISSION = 123;
     private static boolean PERMISSION_GRANTED = true;
+    private String widgetIcon;
 
     private SharedPreferences sharedPreferences;
 
@@ -61,15 +63,6 @@ public class MainActivity extends AppCompatActivity
         this.setContentView(R.layout.activity_main);
 
         loadData();
-
-         // Create a new user with a first and last name
-//         Map<String, Object> user = new HashMap<>();
-//         user.put("first", "Ada");
-//         user.put("last", "Lovelace");
-//         user.put("born", 1815);
-//
-//// Add a new document with a generated ID
-
 
         Button conCat = findViewById(R.id.ConCat);
         conCat.setOnClickListener(this);
@@ -136,6 +129,10 @@ public class MainActivity extends AppCompatActivity
                      if (result.getResultCode() == Activity.RESULT_OK) {
                          Intent i = result.getData();
                          // handle the code here
+                         String path = Optional.of(i.getStringExtra("Image"))
+                                 .orElse("DEFAULT");
+                         widgetIcon = path;
+                         Log.i(TAG, widgetIcon);
                      }
                  }
              });
@@ -159,6 +156,7 @@ public class MainActivity extends AppCompatActivity
                     intent.putExtra("region 4", sharedPreferences.getString(Integer.toString(buttonIDs[3]), AppInfo.EMPTY));
                     intent.putExtra("region 5", sharedPreferences.getString(Integer.toString(buttonIDs[4]), AppInfo.EMPTY));
                     intent.putExtra("region 6", sharedPreferences.getString(Integer.toString(buttonIDs[5]), AppInfo.EMPTY));
+                    intent.putExtra("Image", widgetIcon);
                     startService(intent);
                 } else {
                     askForSystemOverlayPermission();

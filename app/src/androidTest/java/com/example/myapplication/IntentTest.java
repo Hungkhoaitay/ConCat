@@ -55,6 +55,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Test 1: Asserting that click intent will launch user to another package. Asserting that
+ * application intent is launch-able, user can use ConCat to launch to another package on
+ * the phone. Use example with Youtube, Telegram, Whatsapp, Reddit, Netflix...
+ * Test case passes.
+ *
+ * Test 2: Complete Widget movement test: 6 different apps are test with full activity scenario
+ */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class IntentTest {

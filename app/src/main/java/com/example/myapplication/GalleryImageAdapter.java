@@ -20,10 +20,13 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
 
     private final List<String> fileList;
     private final Activity activity;
+    private final onItemClickListener listener;
 
-    public GalleryImageAdapter(Activity activity, List<String> fileList) {
+    public GalleryImageAdapter(Activity activity, List<String> fileList,
+                               onItemClickListener listener) {
         this.activity = activity;
         this.fileList = fileList;
+        this.listener = listener;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -32,6 +35,19 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
             super(itemView);
             this.image = itemView.findViewById(R.id.images);
         }
+
+        public void binder(final String filePath, final onItemClickListener listener) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(filePath);
+                }
+            });
+        }
+    }
+
+    public interface onItemClickListener {
+        void onItemClick(String filePath);
     }
 
     @Override
@@ -40,7 +56,6 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
                 .inflate(R.layout.gallery_recycler_view, parent, false);
         return new ViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Glide.with(activity)
@@ -49,13 +64,14 @@ public class GalleryImageAdapter extends RecyclerView.Adapter<GalleryImageAdapte
                 .centerCrop()
                 .into(holder.image);
         final int itemPosition = holder.getAdapterPosition();
-        holder.image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(activity, fileList.get(itemPosition),
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+        holder.binder(fileList.get(position), listener);
+//        holder.image.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(activity, fileList.get(itemPosition),
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     @Override

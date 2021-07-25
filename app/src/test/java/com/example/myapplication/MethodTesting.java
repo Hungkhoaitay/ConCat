@@ -8,6 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * Local Unit Test:
+ * Check region Method: Test whether system can determine the correct app region
+ * and return the corresponding data
+ */
 public class MethodTesting {
 
     private static final int REGION_1 = -1;
