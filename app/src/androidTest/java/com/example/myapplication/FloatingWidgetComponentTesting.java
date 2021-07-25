@@ -71,6 +71,42 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Instrumented Unit and GUI test, in combination:
+ * Test 1: Test whether floating widget can overlay user activity.
+ * Status: Failed, it is necessary to have tampering while testing, by clicking back
+ * on granting permission testing while doing testing, as this is an action granted externally.
+ * GrantPermissionRule does not allow tester to manually access permission.
+ *
+ * Test 2: Test transition of two child views within the floating widget. Test involves whether
+ * collapsed view (which is only wrap-contented) and expanded view (which is match-parent) can
+ * alternate with each other on clicking.
+ * Status: Test passes
+ *
+ * Test 3: Test whether the user can launch and close the floating widget on demand. User can
+ * close the floating widget when they click the X button on top, and can relaunch the floating
+ * widget when scrolling and clicking notification.
+ * Status: Test passes
+ *
+ * Test 4: Auto-alignment of floating widget. Test whether the floating widget will automatically
+ * align itself to the nearest edge of the phone.
+ * Status: Test passes
+ *
+ * Integration Test with GUI assertions:
+ *
+ * Complete test scenario:
+ * 1. User long click the 6 buttons and choose an app by scrolling through recycler view. Actions
+ * require alternation between MainActivity and ScrollingActivity. On finish, 6 buttons will have
+ * 6 different icons attaching to them.
+ * Status: Test passes
+ *
+ * 2. User launch ConCat and is able to use the floating widget. User tap on the floating widget
+ * and is able to see two buttons: launch app button and go to settings button.
+ * User then enter a sequence of actions that clicks on the launch app button 6 different times
+ * and drag on 6 main directions as divided. On finish dragging, a launch intent will be created
+ * to the specified application.
+ * Status: Test passes
+ */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class FloatingWidgetComponentTesting {
@@ -224,11 +260,11 @@ public class FloatingWidgetComponentTesting {
                         .getWindow().getDecorView())))).check(matches(isDisplayed()));
         UiObject2 widget = device.findObject(By.desc("Floating Widget"));
         widget.drag(new Point(width/2, height/3));
-        // assertEquals(widget.getVisibleCenter().x, width);
+        assertEquals(widget.getVisibleCenter().x, width);
         widget.drag(new Point(-width/3, -height/4));
-        // assertEquals(widget.getVisibleCenter().x, 0);
+        assertEquals(widget.getVisibleCenter().x, 0);
         widget.drag(new Point(-width/2, height));
-        // assertEquals(widget.getVisibleCenter().x, 0);
+        assertEquals(widget.getVisibleCenter().x, 0);
         onView(withId(R.id.buttonClose))
                 .inRoot(withDecorView(not(is(activityTestRule.getActivity()
                         .getWindow().getDecorView())))).perform(click());

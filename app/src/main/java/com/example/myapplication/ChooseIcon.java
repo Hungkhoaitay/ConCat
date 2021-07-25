@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -20,11 +23,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ChooseIcon extends Activity {
+public class ChooseIcon extends Activity implements GalleryImageAdapter.onItemClickListener{
 
     private RecyclerView recyclerView;
     private GalleryImageAdapter adapter;
@@ -35,7 +39,7 @@ public class ChooseIcon extends Activity {
             "Rick Ashley-sama"
     };
 
-    private Drawable selectedImage;
+    private String selectedImagePath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,14 +54,14 @@ public class ChooseIcon extends Activity {
 
         List<String> imageFiles = getMediaFiles(this);
         Collections.reverse(imageFiles);
-        adapter = new GalleryImageAdapter(this, imageFiles);
+        adapter = new GalleryImageAdapter(this, imageFiles, this);
         recyclerView.setAdapter(adapter);
         Button button = findViewById(R.id.button_fragment);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("", 0);
+                resultIntent.putExtra("Image", selectedImagePath);
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
@@ -83,6 +87,8 @@ public class ChooseIcon extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     public List<String> getMediaFiles(Context context) {
         List<String> fileList = new ArrayList<>();
@@ -113,5 +119,13 @@ public class ChooseIcon extends Activity {
             cursor.close();
         }
         return fileList;
+    }
+
+    @Override
+    public void onItemClick(String filePath) {
+        File imageFile = new File(filePath);
+        if (imageFile.exists()) {
+            this.selectedImagePath = filePath;
+        }
     }
 }

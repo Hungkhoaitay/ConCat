@@ -17,6 +17,14 @@ import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity
                                             implements View.OnClickListener {
@@ -34,6 +42,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int WINDOW_PERMISSION = 123;
     private static boolean PERMISSION_GRANTED = true;
+    private String widgetIcon;
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +97,17 @@ public class MainActivity extends AppCompatActivity
 
      ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
              new ActivityResultContracts.StartActivityForResult(),
-             result -> {
-                 if (result.getResultCode() == Activity.RESULT_OK) {
-                     Intent i = result.getData();
-                     // handle the code here
+             new ActivityResultCallback<ActivityResult>() {
+                 @Override
+                 public void onActivityResult(ActivityResult result) {
+                     if (result.getResultCode() == Activity.RESULT_OK) {
+                         Intent i = result.getData();
+                         // handle the code here
+                         String path = Optional.of(i.getStringExtra("Image"))
+                                 .orElse("DEFAULT");
+                         widgetIcon = path;
+                         Log.i(TAG, widgetIcon);
+                     }
                  }
              });
 
@@ -107,6 +123,13 @@ public class MainActivity extends AppCompatActivity
                 }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
                     Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
+                    intent.putExtra("region 1", sharedPreferences.getString(Integer.toString(buttonIDs[0]), AppInfo.EMPTY));
+                    intent.putExtra("region 2", sharedPreferences.getString(Integer.toString(buttonIDs[1]), AppInfo.EMPTY));
+                    intent.putExtra("region 3", sharedPreferences.getString(Integer.toString(buttonIDs[2]), AppInfo.EMPTY));
+                    intent.putExtra("region 4", sharedPreferences.getString(Integer.toString(buttonIDs[3]), AppInfo.EMPTY));
+                    intent.putExtra("region 5", sharedPreferences.getString(Integer.toString(buttonIDs[4]), AppInfo.EMPTY));
+                    intent.putExtra("region 6", sharedPreferences.getString(Integer.toString(buttonIDs[5]), AppInfo.EMPTY));
+                    intent.putExtra("Image", widgetIcon);
                     startService(intent);
                 } else {
                     askForSystemOverlayPermission();

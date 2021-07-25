@@ -73,6 +73,22 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+/**
+ * Instrumented Unit Test in combination with GUI test for Scrolling Activity:
+ * Test 1: Asserting that all required views are there, recycler view and app bar search
+ * Test case passes
+ * Test 2: Asserting that user can scroll to different view and element in recycler view
+ * list elements, with examples, and can click on them. Test case passes
+ * Test 3: Asserting that ConCat can access all launch-able package on any user phone, and
+ * can convert all of them into recycler view for scrolling purpose. To do this, we manually
+ * convert all application to a list externally, and test whether our application can create
+ * the same list that matches the externally-created list, and perform scrollTo() action on
+ * each one of them. Test case passes.
+ * Test 4: Search engine and filter test, asserting whether user can access the search function
+ * and filter out only necessary apps. We use 3 cases: with prefix "You", "Hjk" and "Ga", and
+ * asserting whether all applications with those prefix are there, and that recycler view only
+ * show the number of applications.
+ */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class ScrollingActivityTest {
@@ -202,7 +218,7 @@ public class ScrollingActivityTest {
         assertEquals(appLists.size(), recyclerView.getAdapter().getItemCount());
         for (AppInfo appInfo : appLists) {
             onView(withId(R.id.applicationRecyclerView))
-                    .perform(RecyclerViewActions.scrollTo(hasDescendant(
+                    .perform(RecyclerViewActions.scrollTo((
                             withText(appInfo.getLabel(activityTestRule.getActivity()))
                     )));
         }

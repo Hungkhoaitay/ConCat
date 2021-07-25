@@ -2,6 +2,9 @@ package com.example.myapplication;
 
 
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.Root;
 import androidx.test.espresso.ViewInteraction;
@@ -54,7 +57,29 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 // import static org.hamcrest.Matchers.matchesPattern;
 
-
+/**
+ * Instrumented Unit Test:
+ * App Info Test: Asserting that the class and the method returns labelling and icon
+ * of the specified app package. Test case passes.
+ *
+ * GUI Test:
+ * Test 2: Assuming freshly installed, each button will not have any app on it.
+ * Assert that Toast will come up. Test case pass with all API of 29 and below but
+ * fail on API 30, possibly due to internal changes of testing methods.
+ *
+ * Test 3: Asserting that App bar is shown with the user account circle button,
+ * view is scrollable, main UI components all exist (Button choosing, launcher etc)
+ * Test case passes.
+ *
+ * Integration Test:
+ * Test 1: Asserting that Scrolling activity is launched, intent is returned back
+ * Test case passes
+ * Test 2: Asserting that Account activity is launched, intent is returned back.
+ * Test case passes
+ * Test 3: Asserting that Customize activity is launched, all components exist and that
+ * intent is returned back. Test case passes.
+ * Test 4: Asserting that Floating View service is launched with intent. Test passes
+ */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
@@ -126,10 +151,24 @@ public class MainActivityTest {
     }
 
     @Test
-    public void appInfoTest() {
-        assertEquals(AppInfo.of("com.reddit.frontpage")
-                .getLabel(mActivityTestRule.getActivity().getApplicationContext()),
-                "Reddit");
+    public void appInfoTest() throws PackageManager.NameNotFoundException {
+        Context context = mActivityTestRule.getActivity().getApplicationContext();
+        assertEquals(AppInfo.of("com.reddit.frontpage").getLabel(context), "Reddit");
+        assertEquals(AppInfo.of("com.facebook.katana").getLabel(context), "Facebook");
+        assertEquals(AppInfo.of("com.android.vending").getLabel(context), "Google Play Service");
+        assertEquals(AppInfo.of("com.whatsapp").getLabel(context), "Whatsapp");
+        assertEquals(AppInfo.of("com.luminus.nus.edu.sg").getLabel(context), "Luminus");
+
+        assertEquals(AppInfo.of("com.reddit.frontpage").getIcon(context),
+                context.getPackageManager().getApplicationIcon("com.reddit.frontpage"));
+        assertEquals(AppInfo.of("com.facebook.katana").getIcon(context),
+                context.getPackageManager().getApplicationIcon("com.facebook.katana"));
+        assertEquals(AppInfo.of("com.android.vending").getIcon(context),
+                context.getPackageManager().getApplicationIcon("com.android.vending"));
+        assertEquals(AppInfo.of("com.whatsapp").getIcon(context),
+                context.getPackageManager().getApplicationIcon("com.whatsapp"));
+        assertEquals(AppInfo.of("com.luminus.nus.edu.sg").getIcon(context),
+                context.getPackageManager().getApplicationIcon("com.luminus.nus.edu.sg"));
     }
 
 }

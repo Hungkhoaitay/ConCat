@@ -96,6 +96,9 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 
+/**
+ * Test 1: Application is launched on intent, splash screen is shown, and main activity
+ */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 26)
