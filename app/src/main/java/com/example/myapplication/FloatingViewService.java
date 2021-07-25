@@ -23,24 +23,24 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import java.io.File;
 import java.util.List;
 
-import static com.example.myapplication.FloatingViewValues.BACKGROUND_SELECTION;
-import static com.example.myapplication.FloatingViewValues.DEFAULT_VALUE;
-import static com.example.myapplication.FloatingViewValues.IMAGE_SELECTION;
-import static com.example.myapplication.FloatingViewValues.REGION_1;
-import static com.example.myapplication.FloatingViewValues.REGION_2;
-import static com.example.myapplication.FloatingViewValues.REGION_3;
-import static com.example.myapplication.FloatingViewValues.REGION_4;
-import static com.example.myapplication.FloatingViewValues.REGION_5;
-import static com.example.myapplication.FloatingViewValues.REGION_6;
-import static com.example.myapplication.FloatingViewValues.applicationList;
+import static com.example.myapplication.StringValue.DEFAULT_VALUE;
+import static com.example.myapplication.StringValue.IMAGE_SELECTION;
+import static com.example.myapplication.StringValue.REGION_1;
+import static com.example.myapplication.StringValue.REGION_2;
+import static com.example.myapplication.StringValue.REGION_3;
+import static com.example.myapplication.StringValue.REGION_4;
+import static com.example.myapplication.StringValue.REGION_5;
+import static com.example.myapplication.StringValue.REGION_6;
 
 public class FloatingViewService extends Service implements View.OnClickListener {
 
@@ -74,9 +74,9 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
     }
 
-    // private String background;
+    private String background;
                                 //one,   two, three, four, five, six
-    // private String[] newAppList = {null, null, null, null, null, null};
+    private String[] newAppList = {null, null, null, null, null, null};
     /**
      * Check this method later because of arithmetic errors
      * Determine region for app launching
@@ -131,7 +131,14 @@ public class FloatingViewService extends Service implements View.OnClickListener
             manager.createNotificationChannel(channel);
         }
         Intent intent = new Intent(getApplicationContext(), FloatingViewService.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("region 1", newAppList[0]);
+        intent.putExtra("region 2", newAppList[1]);
+        intent.putExtra("region 3", newAppList[2]);
+        intent.putExtra("region 4", newAppList[3]);
+        intent.putExtra("region 5", newAppList[4]);
+        intent.putExtra("region 6", newAppList[5]);
+        intent.putExtra(IMAGE_SELECTION, background);
+        Log.d("", background);
         PendingIntent pendingIntent = PendingIntent
                 .getService(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -197,14 +204,13 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
         private void changeBackground(int position) {
             mFloatingView.findViewById(R.id.collapsed_iv).
-                    setBackground(AppInfo.of(applicationList[position])
-                            .getIcon(getApplicationContext()));
+                    setBackground(AppInfo.of(newAppList[position]).getIcon(getApplicationContext()));
         }
 
         private void launchApp(int position) {
-            resolveInfoAndLaunchApp(applicationList[position]);
+            resolveInfoAndLaunchApp(newAppList[position]);
             Toast.makeText(getApplicationContext(), "Launch " +
-                    AppInfo.of(applicationList[position]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
+                    AppInfo.of(newAppList[position]).getLabel(getApplicationContext()), Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -263,12 +269,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
         }
 
         this.packageManager = getApplicationContext().getPackageManager();
-        if (UserData.USERDATA.buttonsData() != null) {
-            applicationList = UserData.USERDATA.buttonsData();
-        }
-        if (intent.getStringExtra(IMAGE_SELECTION) != null) {
-            FloatingViewValues.BACKGROUND_SELECTION = intent.getStringExtra(IMAGE_SELECTION);
-        }
+        this.newAppList = UserData.USERDATA.buttonsData();
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
         this.params = new WindowManager.LayoutParams(
@@ -279,16 +280,17 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 PixelFormat.TRANSLUCENT
         );
 
+        this.background = intent.getStringExtra(IMAGE_SELECTION);
 
-        Log.d("Current background: ", BACKGROUND_SELECTION);
+        Log.d("Current background: ", background);
         for (int i = 0; i < 6; i++) {
-            Log.d("", applicationList[i]);
+            Log.d("", newAppList[i]);
         }
-        if (BACKGROUND_SELECTION.equals(DEFAULT_VALUE)) {
+        if (background.equals(DEFAULT_VALUE)) {
             mFloatingView.findViewById(R.id.collapsed_iv)
                     .setBackgroundResource(R.drawable.concat);
         } else {
-            File imageFile = new File(BACKGROUND_SELECTION);
+            File imageFile = new File(background);
             Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
             Drawable drawable = new BitmapDrawable(getResources(), bitmap);
             mFloatingView.findViewById(R.id.collapsed_iv).setBackground(drawable);
@@ -370,7 +372,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 setCollapsedView();
                 break;
             case R.id.buttonClose:
-                Log.d("", BACKGROUND_SELECTION);
+                Log.d("", background);
                 stopSelf();
                 createNotification();
                 break;

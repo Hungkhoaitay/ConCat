@@ -1,7 +1,10 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,12 +24,19 @@ import androidx.core.widget.NestedScrollView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import static android.content.ContentValues.TAG;
 
-import static com.example.myapplication.FloatingViewValues.CANCEL_SELECTION;
-import static com.example.myapplication.FloatingViewValues.DEFAULT_VALUE;
-import static com.example.myapplication.FloatingViewValues.IMAGE_SELECTION;
+import static android.content.ContentValues.TAG;
+import static com.example.myapplication.StringValue.CANCEL_SELECTION;
+import static com.example.myapplication.StringValue.DEFAULT_VALUE;
+import static com.example.myapplication.StringValue.IMAGE_SELECTION;
 
 public class MainActivity extends AppCompatActivity
                                             implements View.OnClickListener {
