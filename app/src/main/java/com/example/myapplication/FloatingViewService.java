@@ -4,6 +4,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -131,6 +132,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
             manager.createNotificationChannel(channel);
         }
         Intent intent = new Intent(getApplicationContext(), FloatingViewService.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("region 1", newAppList[0]);
         intent.putExtra("region 2", newAppList[1]);
         intent.putExtra("region 3", newAppList[2]);
@@ -138,9 +140,11 @@ public class FloatingViewService extends Service implements View.OnClickListener
         intent.putExtra("region 5", newAppList[4]);
         intent.putExtra("region 6", newAppList[5]);
         intent.putExtra(IMAGE_SELECTION, background);
-        Log.d("", background);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntent(intent);
         PendingIntent pendingIntent = PendingIntent
-                .getService(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                .getService(getApplicationContext(), 0, intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Launch")
                 .setSmallIcon(R.drawable.concat)
@@ -261,6 +265,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
     }
 
 
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (mFloatingView != null) {
@@ -270,6 +275,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
 
         this.packageManager = getApplicationContext().getPackageManager();
         this.newAppList = UserData.USERDATA.buttonsData();
+        this.background = intent.getStringExtra(IMAGE_SELECTION);
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
         this.params = new WindowManager.LayoutParams(
@@ -279,8 +285,6 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT
         );
-
-        this.background = intent.getStringExtra(IMAGE_SELECTION);
 
         Log.d("Current background: ", background);
         for (int i = 0; i < 6; i++) {
@@ -367,6 +371,8 @@ public class FloatingViewService extends Service implements View.OnClickListener
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
                 stopSelf();
+                Toast.makeText(getApplicationContext(),
+                        "Returning to App. Please restart widget", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.layoutExpanded:
                 setCollapsedView();
