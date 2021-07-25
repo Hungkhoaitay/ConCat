@@ -9,14 +9,18 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity
                                             implements View.OnClickListener {
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
+         Log.d(TAG, "onCreate");
 
         loadData();
 
@@ -75,6 +80,8 @@ public class MainActivity extends AppCompatActivity
      @Override
      protected void onStart() {
          super.onStart();
+         // UserData.USERDATA.set(this);
+         Log.d(TAG, "OnStart");
      }
 
      private void askForSystemOverlayPermission() {
@@ -138,7 +145,7 @@ public class MainActivity extends AppCompatActivity
     }
 
      public void loadData() {
-        UserData.USERDATA.update(LoginActivity.userID, this);
+        UserData.USERDATA.update(GoogleSignIn.getLastSignedInAccount(this).getId(), this);
      }
 
      @Override
