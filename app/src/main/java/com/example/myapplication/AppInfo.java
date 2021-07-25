@@ -71,16 +71,16 @@ public abstract class AppInfo implements Serializable {
 
         @Override
         public void setButton(Context context, ImageView btn, int pos) {
-            btn.setBackground(this.getIcon(context));
-
             btn.setOnClickListener(v -> this.launch(context));
 
             btn.setOnLongClickListener(v -> {
                 Intent intent = new Intent(context, ScrollingActivity.class);
-                intent.putExtra("Button Pos", btn.getId());
+                intent.putExtra("Button Pos", pos);
                 context.startActivity(intent);
                 return false;
             });
+
+            btn.setBackground(this.getIcon(context));
         }
 
         @Override

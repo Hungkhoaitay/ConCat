@@ -73,7 +73,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
             if (buttonPos != -1) {
                 UserData.USERDATA.updateButton(buttonPos, app.getName());
                 context.startActivity(intent);
-                UserData.USERDATA.sendData();
+                UserData.USERDATA.sendData((AppCompatActivity) context);
             } else {
                 app.launch(context);
             }

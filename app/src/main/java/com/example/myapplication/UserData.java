@@ -5,8 +5,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,7 +24,6 @@ import static com.example.myapplication.MainActivity.buttonIDs;
 public class UserData {
     private Buttons button;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private String userID;
 
     private class Buttons {
         private String[] buttons;
@@ -51,14 +52,14 @@ public class UserData {
             return has;
         }
 
-        private void sendData() {
-            db.collection(userID)
+        private void sendData(AppCompatActivity ac) {
+            db.collection(FirebaseAuth.getInstance().getUid())
                     .document("buttons")
                     .set(toHashMap());
         }
 
-        private void update(AppCompatActivity ac) {
-            DocumentReference docRef = db.collection(userID).document("buttons");
+        private void update(String userID, AppCompatActivity ac) {
+            DocumentReference docRef = db.collection(FirebaseAuth.getInstance().getUid()).document("buttons");
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -72,9 +73,8 @@ public class UserData {
                                 AppInfo.of(buttons[i]).setButton(ac, ac.findViewById(buttonIDs[i]), i);
                             }
                         } else {
-                            for (int i = 0; i < MainActivity.NUMBER_OF_BUTTONS; i++) {
-                                AppInfo.of(buttons[i]).setButton(ac, ac.findViewById(buttonIDs[i]), i);
-                            }
+                            clean();
+                            set(ac);
                             Log.d(TAG, "No such document");
                         }
                     } else {
@@ -82,6 +82,10 @@ public class UserData {
                     }
                 }
             });
+        }
+
+        private void clean() {
+            Arrays.fill(this.buttons, AppInfo.EMPTY);
         }
 
         private String[] data() {
@@ -103,17 +107,16 @@ public class UserData {
         this.button.set(ac);
     }
 
-    public void sendData() {
-        this.button.sendData();
+    public void sendData(AppCompatActivity ac) {
+        this.button.sendData(ac);
     }
 
     public void clean() {
         this.button = new Buttons();
     }
 
-    public void update(String user, AppCompatActivity ac) {
-        this.userID = user;
-        this.button.update(ac);
+    public void update(String userID, AppCompatActivity ac) {
+        this.button.update(userID, ac);
     }
 
     public void check() {
