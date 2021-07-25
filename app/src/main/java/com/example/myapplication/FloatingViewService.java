@@ -314,12 +314,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
         }
 
         this.packageManager = getApplicationContext().getPackageManager();
-        this.newAppList[0] = intent.getStringExtra("region 1");
-        this.newAppList[1] = intent.getStringExtra("region 2");
-        this.newAppList[2] = intent.getStringExtra("region 3");
-        this.newAppList[3] = intent.getStringExtra("region 4");
-        this.newAppList[4] = intent.getStringExtra("region 5");
-        this.newAppList[5] = intent.getStringExtra("region 6");
+        this.newAppList = UserData.USERDATA.buttonsData();
 
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null);
         this.params = new WindowManager.LayoutParams(

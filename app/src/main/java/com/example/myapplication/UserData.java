@@ -1,19 +1,12 @@
 package com.example.myapplication;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static android.content.ContentValues.TAG;
-import static android.content.Context.MODE_PRIVATE;
 import static com.example.myapplication.MainActivity.buttonIDs;
 
 public class UserData {
@@ -65,15 +57,35 @@ public class UserData {
                     .set(toHashMap());
         }
 
-        private void update() {
+        private void update(AppCompatActivity ac) {
             DocumentReference docRef = db.collection(userID).document("buttons");
-            docRef.get().addOnSuccessListener(documentSnapshot -> {
-                Map<String, Object> has = documentSnapshot.getData();
-                for (int i = 0; i < MainActivity.NUMBER_OF_BUTTONS; i++) {
-                    this.buttons[i] = Optional.of((String) has.get(Integer.toString(i))).orElse(AppInfo.EMPTY);
-                    Log.d(TAG, "heelo" + buttons[i]);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Map<String, Object> has = document.getData();
+                            Log.d(TAG, "DocumentSnapshot data: " + has);
+                            for (int i = 0; i < MainActivity.NUMBER_OF_BUTTONS; i++) {
+                                Buttons.this.buttons[i] = Optional.of((String) has.get(Integer.toString(i))).orElse(AppInfo.EMPTY);
+                                AppInfo.of(buttons[i]).setButton(ac, ac.findViewById(buttonIDs[i]), i);
+                            }
+                        } else {
+                            for (int i = 0; i < MainActivity.NUMBER_OF_BUTTONS; i++) {
+                                AppInfo.of(buttons[i]).setButton(ac, ac.findViewById(buttonIDs[i]), i);
+                            }
+                            Log.d(TAG, "No such document");
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
                 }
             });
+        }
+
+        private String[] data() {
+            return this.buttons;
         }
     }
 
@@ -96,11 +108,21 @@ public class UserData {
     }
 
     public void clean() {
-        USERDATA = new UserData();
+        this.button = new Buttons();
     }
 
-    public void update(FirebaseUser user) {
-        userID = user.getUid();
-        this.button.update();
+    public void update(String user, AppCompatActivity ac) {
+        this.userID = user;
+        this.button.update(ac);
+    }
+
+    public void check() {
+        for (int i = 0; i < MainActivity.NUMBER_OF_BUTTONS; i++) {
+            Log.d(TAG, "check data: " + i + button.buttons[i]);
+        }
+    }
+
+    public String[] buttonsData() {
+        return this.button.data();
     }
 }

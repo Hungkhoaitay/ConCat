@@ -2,7 +2,6 @@ package com.example.myapplication;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,27 +9,14 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity
                                             implements View.OnClickListener {
@@ -46,30 +32,15 @@ public class MainActivity extends AppCompatActivity
 
     final static int NUMBER_OF_BUTTONS = 6;
 
-    public static final String SHARED_PREFS = "sharedPrefs";
-
     private static final int WINDOW_PERMISSION = 123;
     private static boolean PERMISSION_GRANTED = true;
-
-    private SharedPreferences sharedPreferences;
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setContentView(R.layout.activity_main);
 
         loadData();
-
-         // Create a new user with a first and last name
-//         Map<String, Object> user = new HashMap<>();
-//         user.put("first", "Ada");
-//         user.put("last", "Lovelace");
-//         user.put("born", 1815);
-//
-//// Add a new document with a generated ID
-
 
         Button conCat = findViewById(R.id.ConCat);
         conCat.setOnClickListener(this);
@@ -104,19 +75,6 @@ public class MainActivity extends AppCompatActivity
      @Override
      protected void onStart() {
          super.onStart();
-         
-//         mConditionRef.addValueEventListener(new ValueEventListener() {
-//             @Override
-//             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-//                 String text = snapshot.getValue(String.class);
-//                 Toast.makeText(MainActivity.this, "It is work", Toast.LENGTH_SHORT).show();
-//             }
-//
-//             @Override
-//             public void onCancelled(@NonNull @NotNull DatabaseError error) {
-//
-//             }
-//         });
      }
 
      private void askForSystemOverlayPermission() {
@@ -130,20 +88,16 @@ public class MainActivity extends AppCompatActivity
 
      ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
              new ActivityResultContracts.StartActivityForResult(),
-             new ActivityResultCallback<ActivityResult>() {
-                 @Override
-                 public void onActivityResult(ActivityResult result) {
-                     if (result.getResultCode() == Activity.RESULT_OK) {
-                         Intent i = result.getData();
-                         // handle the code here
-                     }
+             result -> {
+                 if (result.getResultCode() == Activity.RESULT_OK) {
+                     Intent i = result.getData();
+                     // handle the code here
                  }
              });
 
 
     @Override
     public void onClick(View v) {
-        TextView display = findViewById(R.id.display);
         switch (v.getId()) {
             case R.id.ConCat:
                 Log.i("", "Launched");
@@ -153,12 +107,6 @@ public class MainActivity extends AppCompatActivity
                 }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
                     Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
-                    intent.putExtra("region 1", sharedPreferences.getString(Integer.toString(buttonIDs[0]), AppInfo.EMPTY));
-                    intent.putExtra("region 2", sharedPreferences.getString(Integer.toString(buttonIDs[1]), AppInfo.EMPTY));
-                    intent.putExtra("region 3", sharedPreferences.getString(Integer.toString(buttonIDs[2]), AppInfo.EMPTY));
-                    intent.putExtra("region 4", sharedPreferences.getString(Integer.toString(buttonIDs[3]), AppInfo.EMPTY));
-                    intent.putExtra("region 5", sharedPreferences.getString(Integer.toString(buttonIDs[4]), AppInfo.EMPTY));
-                    intent.putExtra("region 6", sharedPreferences.getString(Integer.toString(buttonIDs[5]), AppInfo.EMPTY));
                     startService(intent);
                 } else {
                     askForSystemOverlayPermission();
@@ -173,8 +121,6 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.this.startActivity(intentAccount);
                 break;
             case R.id.MOSABtn:
-//                Intent intentMOSA = new Intent(MainActivity.this, MostOnScreenApps.class);
-//                MainActivity.this.startActivity(intentMOSA);
                 Intent intentMOSA = new Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);
                 MainActivity.this.startActivity(intentMOSA);
                 break;
@@ -192,7 +138,7 @@ public class MainActivity extends AppCompatActivity
     }
 
      public void loadData() {
-        UserData.USERDATA.set(this);
+        UserData.USERDATA.update(LoginActivity.userID, this);
      }
 
      @Override
