@@ -1,6 +1,6 @@
 package com.example.myapplication;
 
-import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,16 +21,12 @@ import androidx.core.widget.NestedScrollView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 import static android.content.ContentValues.TAG;
 
-import static android.content.ContentValues.TAG;
+import static com.example.myapplication.FloatingViewValues.CANCEL_SELECTION;
+import static com.example.myapplication.FloatingViewValues.DEFAULT_VALUE;
+import static com.example.myapplication.FloatingViewValues.IMAGE_SELECTION;
 
 public class MainActivity extends AppCompatActivity
                                             implements View.OnClickListener {
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int WINDOW_PERMISSION = 123;
     private static boolean PERMISSION_GRANTED = true;
-    private String widgetIcon;
+    private String widgetIcon = DEFAULT_VALUE;
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,10 +88,26 @@ public class MainActivity extends AppCompatActivity
      protected void onStart() {
          super.onStart();
          // UserData.USERDATA.set(this);
+         if (isMyServiceRunning(FloatingViewService.class)) {
+             this.stopService(new Intent(this, FloatingViewService.class));
+             Toast.makeText(getApplicationContext(),
+                     "Widget is removed. Please restart!", Toast.LENGTH_SHORT).show();
+         }
+         PERMISSION_GRANTED = true;
          Log.d(TAG, "OnStart");
      }
 
-     private void askForSystemOverlayPermission() {
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void askForSystemOverlayPermission() {
         Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                 Uri.parse("package:" + getPackageName()));
         startActivityForResult(intent, WINDOW_PERMISSION);
@@ -107,13 +121,27 @@ public class MainActivity extends AppCompatActivity
              new ActivityResultCallback<ActivityResult>() {
                  @Override
                  public void onActivityResult(ActivityResult result) {
-                     if (result.getResultCode() == Activity.RESULT_OK) {
+                     if (result.getResultCode() == 420) {
                          Intent i = result.getData();
                          // handle the code here
+                         /*
                          String path = Optional.of(i.getStringExtra("Image"))
                                  .orElse("DEFAULT");
+
+                          */
+                         // widgetIcon = i.getStringExtra("Image");
+                         // Log.i(TAG, widgetIcon);
+                         Toast.makeText(getApplicationContext(),
+                                 CANCEL_SELECTION, Toast.LENGTH_SHORT).show();
+                     } else if (result.getResultCode() == 69) {
+                         Intent i = result.getData();
+                         String path = i.getStringExtra("Image Path");
                          widgetIcon = path;
-                         Log.i(TAG, widgetIcon);
+                         Toast.makeText(getApplicationContext(),
+                                 widgetIcon, Toast.LENGTH_SHORT).show();
+                     } else if (result.getResultCode() == 42069) {
+                         Intent i = result.getData();
+                         widgetIcon = DEFAULT_VALUE;
                      }
                  }
              });
@@ -123,26 +151,20 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ConCat:
-                Log.i("", "Launched");
                 if (PERMISSION_GRANTED == false) {
                     askForSystemOverlayPermission();
                     break;
                 }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)) {
                     Intent intent = new Intent(MainActivity.this, FloatingViewService.class);
-                    intent.putExtra("region 1", sharedPreferences.getString(Integer.toString(buttonIDs[0]), AppInfo.EMPTY));
-                    intent.putExtra("region 2", sharedPreferences.getString(Integer.toString(buttonIDs[1]), AppInfo.EMPTY));
-                    intent.putExtra("region 3", sharedPreferences.getString(Integer.toString(buttonIDs[2]), AppInfo.EMPTY));
-                    intent.putExtra("region 4", sharedPreferences.getString(Integer.toString(buttonIDs[3]), AppInfo.EMPTY));
-                    intent.putExtra("region 5", sharedPreferences.getString(Integer.toString(buttonIDs[4]), AppInfo.EMPTY));
-                    intent.putExtra("region 6", sharedPreferences.getString(Integer.toString(buttonIDs[5]), AppInfo.EMPTY));
-                    intent.putExtra("Image", widgetIcon);
+                    intent.putExtra(IMAGE_SELECTION, widgetIcon);
                     startService(intent);
                 } else {
                     askForSystemOverlayPermission();
                 }
                 break;
             case R.id.customizeBtn:
+                this.stopService(new Intent(this, FloatingViewService.class));
                 Intent intent = new Intent(this, ChooseIcon.class);
                 activityResultLauncher.launch(intent);
                 break;
