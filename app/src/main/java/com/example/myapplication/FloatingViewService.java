@@ -335,7 +335,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
         );
 
         Button returnToApp = (Button) mFloatingView.findViewById(R.id.returnToApp);
-        returnToApp.setText("Go to App");
+        returnToApp.setText("Open Settings");
         expandedView.setOnClickListener(this);
 
         mFloatingView.findViewById(R.id.relativeLayoutParent).setOnTouchListener(new NormalMovement());
