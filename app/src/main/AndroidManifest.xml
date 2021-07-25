@@ -55,6 +55,7 @@
 
         <service
             android:name=".FloatingViewService"
+            android:launchMode="singleTask"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

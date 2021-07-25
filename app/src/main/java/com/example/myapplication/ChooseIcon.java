@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -23,12 +24,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.AppBarLayout;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ChooseIcon extends Activity implements GalleryImageAdapter.onItemClickListener{
+public class ChooseIcon extends Activity
+        implements GalleryImageAdapter.onItemClickListener, View.OnClickListener {
 
     private RecyclerView recyclerView;
     private GalleryImageAdapter adapter;
@@ -39,6 +43,11 @@ public class ChooseIcon extends Activity implements GalleryImageAdapter.onItemCl
             "Rick Ashley-sama"
     };
 
+    Button cancelSelection;
+    static int CANCEL_SELECTION = 420;
+    static int CONFIRM_SELECTION = 69;
+    static int DEFAULT_SELECTION = 42069;
+
     private String selectedImagePath;
 
     @Override
@@ -46,28 +55,38 @@ public class ChooseIcon extends Activity implements GalleryImageAdapter.onItemCl
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.choose_icon);
-
+        Log.d("", "First");
         askPermission();
         recyclerView = findViewById(R.id.choose_icon_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.setHasFixedSize(true);
-
+        Log.d("", "Second");
         List<String> imageFiles = getMediaFiles(this);
         Collections.reverse(imageFiles);
         adapter = new GalleryImageAdapter(this, imageFiles, this);
         recyclerView.setAdapter(adapter);
-        Button button = findViewById(R.id.button_fragment);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("Image", selectedImagePath);
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish();
-            }
-        });
-        button.setText("Cancel Selection");
+
+
+        this.cancelSelection = findViewById(R.id.cancel_selection);
+        Log.d("", "Third");
+        cancelSelection.setText("Cancel Selection");
+        cancelSelection.setOnClickListener(this);
+
+        findViewById(R.id.default_view).setOnClickListener(this);
     }
+//
+//        this.confirmSelection = findViewById(R.id.confirm_selection);
+//        confirmSelection.setText("Confirm Selection");
+//        confirmSelection.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent resultIntent = new Intent();
+//                resultIntent.putExtra("Image Path", selectedImagePath);
+//                setResult(CONFIRM_SELECTION, resultIntent);
+//                finish();
+//            }
+//        });
+//    }
 
     private void askPermission() {
         String[] permission = {Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -118,6 +137,7 @@ public class ChooseIcon extends Activity implements GalleryImageAdapter.onItemCl
             }
             cursor.close();
         }
+        Log.d("", "Fourth");
         return fileList;
     }
 
@@ -126,6 +146,27 @@ public class ChooseIcon extends Activity implements GalleryImageAdapter.onItemCl
         File imageFile = new File(filePath);
         if (imageFile.exists()) {
             this.selectedImagePath = filePath;
+            Log.d("", filePath);
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("Image Path", selectedImagePath);
+            setResult(CONFIRM_SELECTION, resultIntent);
+            Log.d("","FINISH");
+            finish();
+            Log.d("", "Finish activity");
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent resultIntent = new Intent();
+        switch (v.getId()) {
+            case R.id.cancel_selection:
+                setResult(CANCEL_SELECTION, resultIntent);
+                finish();
+            case R.id.default_view:
+                setResult(DEFAULT_SELECTION, resultIntent);
+                finish();
+            default:
         }
     }
 }
