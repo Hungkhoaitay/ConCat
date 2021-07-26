@@ -36,12 +36,7 @@ public class ChooseIcon extends Activity
 
     private RecyclerView recyclerView;
     private GalleryImageAdapter adapter;
-    String[] name = {
-            "ConCat",
-            "Apple",
-            "Communism",
-            "Rick Ashley-sama"
-    };
+
 
     Button cancelSelection;
     static int CANCEL_SELECTION = 420;
