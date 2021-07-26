@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +21,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class AccountActivity extends AppCompatActivity {
     private ActionBar actionBar;
@@ -26,6 +31,9 @@ public class AccountActivity extends AppCompatActivity {
     private ImageView avatar;
 
     private Button signOut;
+
+    List<ApplicationInfo> packages;
+    List<AppInfo> appInfos;
 
     private GoogleSignInClient mGoogleSignInClient;
     @Override
@@ -45,7 +53,18 @@ public class AccountActivity extends AppCompatActivity {
         avatar = findViewById(R.id.profile_image);
         num_of_app = findViewById(R.id.num_of_app_txt);
 
+        final PackageManager pm = getPackageManager();
 
+        packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+        appInfos = packages.stream()
+                .filter(packageInfo -> pm.getLaunchIntentForPackage(packageInfo.packageName) != null)
+                .map(packageInfo -> AppInfo.some(packageInfo))
+                .collect(Collectors.toList());
+
+        int numOfApp = appInfos.size();
+
+        num_of_app.setText(Integer.toString(numOfApp));
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (acct != null) {
