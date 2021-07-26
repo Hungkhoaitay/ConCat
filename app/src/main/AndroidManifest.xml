@@ -25,7 +25,7 @@
         <activity android:name=".MostOnScreenApps"
             android:label="Most On Screen Apps"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.MyApplication.HaveActionBar"></activity>
+            android:theme="@style/Theme.MyApplication.HaveActionBar"/>
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

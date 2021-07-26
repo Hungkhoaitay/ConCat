@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -82,6 +83,9 @@ public class MainActivity extends AppCompatActivity
          Button MOSABtn = findViewById(R.id.MOSABtn);
          MOSABtn.setOnClickListener(this);
 
+         TextView instructions = (TextView) findViewById(R.id.InstructionText);
+         instructions.setText(R.string.instructions);
+
          NestedScrollView scrollView = findViewById(R.id.scrollView);
          scrollView.getViewTreeObserver()
                  .addOnScrollChangedListener(() -> {
@@ -148,7 +152,8 @@ public class MainActivity extends AppCompatActivity
                          String path = i.getStringExtra("Image Path");
                          widgetIcon = path;
                          Toast.makeText(getApplicationContext(),
-                                 widgetIcon, Toast.LENGTH_SHORT).show();
+                                 "Background for Widget changed!, Launch and Check the changes",
+                                 Toast.LENGTH_SHORT).show();
                      } else if (result.getResultCode() == 42069) {
                          Intent i = result.getData();
                          widgetIcon = DEFAULT_VALUE;
