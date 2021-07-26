@@ -28,4 +28,15 @@
     <string name="TOAST_STRING">
         Empty Button! Hold to choose app
     </string>
+
+    <string name="instructions">
+        \n
+        1. Hold the App buttons to choose an app from list \n
+        2. Click "Customize" to change Widget background \n
+        3. Click Launch to use the Floating Widget \n
+        4. Click Launch App by Swiping \n
+        5. Drag and hold the widget to launch app \n
+           based on the App Logo \n
+        6. Enjoy :) \n
+    </string>
 </resources>

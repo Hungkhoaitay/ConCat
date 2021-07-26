@@ -369,6 +369,10 @@ public class FloatingViewService extends Service implements View.OnClickListener
         }
     }
 
+    private void resolveBackgroundInfo(String background) {
+
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){

@@ -236,19 +236,22 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
                     <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="HOW TO USE CONCAT?"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
+                    <TextView
                         android:id="@+id/InstructionText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Some Instructions" />
+                        android:text="Instructions" />
 
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_width="90dp"
-                    android:layout_height="110dp"
+                    android:layout_width="80dp"
+                    android:layout_height="100dp"
                     android:background="@drawable/shiba"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
