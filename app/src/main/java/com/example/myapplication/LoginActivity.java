@@ -27,7 +27,6 @@ public class LoginActivity extends AppCompatActivity {
     private final static int RC_SIGN_IN = 19;
     private FirebaseUser user;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,10 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         });
         mAuth = FirebaseAuth.getInstance();
     }
-
-//    protected static String getToken(AppCompatActivity ac) {
-//        GoogleSignIn.getLastSignedInAccount(ac);
-//    }
 
     @Override
     protected void onStart() {

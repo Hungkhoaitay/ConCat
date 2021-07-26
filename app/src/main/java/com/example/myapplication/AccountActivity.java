@@ -22,7 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 public class AccountActivity extends AppCompatActivity {
     private ActionBar actionBar;
-    private TextView name, email, id;
+    private TextView name, email, num_of_app;
     private ImageView avatar;
 
     private Button signOut;
@@ -43,6 +43,9 @@ public class AccountActivity extends AppCompatActivity {
         name = findViewById(R.id.name_txt);
         email = findViewById(R.id.email_txt);
         avatar = findViewById(R.id.profile_image);
+        num_of_app = findViewById(R.id.num_of_app_txt);
+
+
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (acct != null) {
