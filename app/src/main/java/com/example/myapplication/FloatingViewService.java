@@ -68,7 +68,7 @@ public class FloatingViewService extends Service implements View.OnClickListener
     private PackageManager packageManager;
     protected WindowManager.LayoutParams params;
 
-    private static final int CLICK_THRESHOLD = 150;
+    private static final int CLICK_THRESHOLD = 1000;
     private static final int LONG_CLICK_THRESHOLD = 1500;
 
     public FloatingViewService() {
@@ -369,8 +369,13 @@ public class FloatingViewService extends Service implements View.OnClickListener
         }
     }
 
-    private void resolveBackgroundInfo(String background) {
-
+    private boolean isNull() {
+        for (String i: newAppList) {
+            if (i != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

@@ -21,13 +21,13 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
 
-
+@Ignore
 @RunWith(AndroidJUnit4.class)
 public class IntentTest {
 
     @Rule
     public IntentsTestRule<MainActivity> intentsTestRule = new IntentsTestRule<>(MainActivity.class);
-    @Ignore
+
     @Test
     public void test1() {
         intending(not(isInternal())).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, null));
@@ -35,14 +35,14 @@ public class IntentTest {
         intended(allOf(toPackage("com.google.android.youtube")));
         intended(not(allOf(toPackage("sg.ndi.sp"))));
         onView(withId(R.id.secondButton)).perform(click());
-        intended(allOf(toPackage("org.telegram.messenger")));
-        onView(withId(R.id.thirdButton)).perform(click());
         intended(allOf(toPackage("com.whatsapp")));
+        onView(withId(R.id.thirdButton)).perform(click());
+        intended(allOf(toPackage("com.android.vending")));
         onView(withId(R.id.fourthButton)).perform(click());
-        intended(allOf(toPackage("com.reddit.frontpage")));
+        intended(allOf(toPackage("com.instagram.android")));
         onView(withId(R.id.fifthButton)).perform(click());
-        intended(allOf(toPackage("fr.playsoft.vnexpress")));
+        intended(allOf(toPackage("com.google.android.apps.maps")));
         onView(withId(R.id.sixthButton)).perform(click());
-        intended(allOf(toPackage("com.android.settings")));
+        intended(allOf(toPackage("com.netflix.mediaclient")));
     }
 }

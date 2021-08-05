@@ -23,6 +23,7 @@ import androidx.test.uiautomator.Direction;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObject2;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
@@ -67,6 +68,7 @@ import static org.junit.Assert.assertTrue;
  *
  * Test 2: Complete Widget movement test: 6 different apps are test with full activity scenario
  */
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class END_TO_END {
@@ -86,8 +88,17 @@ public class END_TO_END {
      * Assumption: Youtube, Whatsapp, Google Play, Instagram, Google Map, Netflix
      */
     @Test
-    public void launcherTest1() {
+    public void launcherTest1() throws UiObjectNotFoundException {
+        onView(withId(R.id.accountBtn)).perform(click());
         device.waitForIdle();
+        onView(withId(R.id.sign_out_btn)).perform(click());
+        device.waitForIdle();
+        onView(withId(R.id.sign_in_btn)).perform(click());
+        UiObject name = device.findObject(new UiSelector().text("Manh Duc Hoang"));
+        name.click();
+        device.waitForIdle();
+        onView(withId(R.id.accountBtn)).perform(click());
+        Espresso.pressBack();
         onView(withId(R.id.firstButton)).perform(longClick());
         // Youtube
         device.waitForIdle();
@@ -138,6 +149,11 @@ public class END_TO_END {
         onView(withId(R.id.applicationRecyclerView)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(50, click())
         );
+
+        onView(withId(R.id.customizeBtn)).perform(click());
+        onView(withId(R.id.choose_icon_recycler_view)).
+                perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+
         onView(withId(R.id.ConCat)).perform(click());
         UiObject2 floatingWidget = device.findObject(By.desc("Floating Widget"));
         floatingWidget.click();
@@ -211,7 +227,7 @@ public class END_TO_END {
         device.findObject(By.desc("Floating Widget")).click();
         device.findObject(By.desc("Return to App")).click();
         device.waitForIdle();
-        intended(allOf(toPackage("com.example.myapplication")));
         onView(withContentDescription("Floating Widget")).check(doesNotExist());
+        device.pressHome();
     }
 }

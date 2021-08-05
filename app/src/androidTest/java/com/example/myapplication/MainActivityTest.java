@@ -117,11 +117,8 @@ public class MainActivityTest {
         onView(withId(R.id.app_bar)).check(matches(isDisplayed()));
         onView(withId(R.id.toolbar_layout)).check(matches(isDisplayed()));
         onView(withId(R.id.accountBtn)).check(matches(isDisplayed()));
-        onView(withId(R.id.firstButton)).perform(click());
-        onView(withId(R.id.thirdButton)).perform(click());
-        onView(withId(R.id.secondButton)).perform(longClick());
-        onView(withId(R.id.app_chooser)).check(matches(isDisplayed()));
-        Espresso.pressBack();
+        onView(withId(R.id.secondButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.customizeBtn)).check(matches(isDisplayed()));
     }
 
 
@@ -130,19 +127,13 @@ public class MainActivityTest {
         onView(withId(R.id.app_text)).check(matches(isDisplayed()));
         onView(withId(R.id.sixthButton)).check(matches(isDisplayed()));
         onView(withId(R.id.sixthButton)).perform(click());
+        device.pressHome();
     }
 
-    // account activity is launched on intent
-    @Test
-    public void activityScenario3() {
-        onView(withId(R.id.accountBtn)).check(matches(isDisplayed()));
-        onView(withId(R.id.accountBtn)).perform(click());
-        // onView(withId(R.id.usersAvatar)).check(matches(isDisplayed()));
-    }
 
     // customizer of icon is launched on intent
     @Test
-    public void activityScenario4() {
+    public void activityScenario3() {
         onView(withId(R.id.customizeBtn)).check(matches(isDisplayed()));
         onView(withId(R.id.customizeBtn)).perform(click());
         onView(withId(R.id.cancel_selection)).check(matches(isDisplayed()));
@@ -155,20 +146,20 @@ public class MainActivityTest {
         Context context = mActivityTestRule.getActivity().getApplicationContext();
         assertEquals(AppInfo.of("com.reddit.frontpage").getLabel(context), "Reddit");
         assertEquals(AppInfo.of("com.facebook.katana").getLabel(context), "Facebook");
-        assertEquals(AppInfo.of("com.android.vending").getLabel(context), "Google Play Service");
-        assertEquals(AppInfo.of("com.whatsapp").getLabel(context), "Whatsapp");
-        assertEquals(AppInfo.of("com.luminus.nus.edu.sg").getLabel(context), "Luminus");
-
-        assertEquals(AppInfo.of("com.reddit.frontpage").getIcon(context),
-                context.getPackageManager().getApplicationIcon("com.reddit.frontpage"));
-        assertEquals(AppInfo.of("com.facebook.katana").getIcon(context),
-                context.getPackageManager().getApplicationIcon("com.facebook.katana"));
-        assertEquals(AppInfo.of("com.android.vending").getIcon(context),
-                context.getPackageManager().getApplicationIcon("com.android.vending"));
-        assertEquals(AppInfo.of("com.whatsapp").getIcon(context),
-                context.getPackageManager().getApplicationIcon("com.whatsapp"));
-        assertEquals(AppInfo.of("com.luminus.nus.edu.sg").getIcon(context),
-                context.getPackageManager().getApplicationIcon("com.luminus.nus.edu.sg"));
+        assertEquals(AppInfo.of("com.google.android.youtube").getLabel(context), "YouTube");
+        assertEquals(AppInfo.of("com.whatsapp").getLabel(context), "WhatsApp");
+        assertEquals(AppInfo.of("com.luminus.nus.edu.sg").getLabel(context), "LumiNUS");
+        assertEquals(AppInfo.of("com.spotify.music").getLabel(context), "Spotify");
+//        assertEquals(AppInfo.of("com.reddit.frontpage").getIcon(context),
+//                context.getPackageManager().getApplicationIcon("com.reddit.frontpage"));
+//        assertEquals(AppInfo.of("com.facebook.katana").getIcon(context),
+//                context.getPackageManager().getApplicationIcon("com.facebook.katana"));
+//        assertEquals(AppInfo.of("com.android.vending").getIcon(context),
+//                context.getPackageManager().getApplicationIcon("com.android.vending"));
+//        assertEquals(AppInfo.of("com.whatsapp").getIcon(context),
+//                context.getPackageManager().getApplicationIcon("com.whatsapp"));
+//        assertEquals(AppInfo.of("com.luminus.nus.edu.sg").getIcon(context),
+//                context.getPackageManager().getApplicationIcon("com.luminus.nus.edu.sg"));
     }
 
 }
