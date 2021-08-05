@@ -134,15 +134,15 @@ public class ScrollingActivityTest {
         PackageManager packageManager = activityTestRule.getActivity().getPackageManager();
         onView(withId(R.id.applicationRecyclerView)).check(matches(isDisplayed()));
         onView(withId(R.id.applicationRecyclerView))
-                .perform(RecyclerViewActions.scrollTo(hasDescendant(
+                .perform(RecyclerViewActions.scrollTo((
                         withText("Reddit")
                 )));
         onView(withId(R.id.applicationRecyclerView))
-                .perform(RecyclerViewActions.scrollTo(hasDescendant(
+                .perform(RecyclerViewActions.scrollTo((
                         withText("VnExpress")
                 )));
         onView(withId(R.id.applicationRecyclerView))
-                .perform(RecyclerViewActions.actionOnItem(hasDescendant(
+                .perform(RecyclerViewActions.actionOnItem((
                         withText("YouTube")
                 ), click()));
         onView(withId(R.id.ConCat)).check(matches(isDisplayed()));

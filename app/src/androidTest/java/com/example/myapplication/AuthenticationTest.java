@@ -39,11 +39,8 @@ public class AuthenticationTest {
     // Users are able to sign in with their Google Account, check their information, and then sign out
     @Test
     public void test1() throws UiObjectNotFoundException {
-        onView(withId(R.id.sign_in_btn)).check(matches(isDisplayed()));
         onView(withId(R.id.sign_in_btn)).perform(click());
-        UiObject name = device.findObject(new UiSelector().text("Manh Duc Hoang"));
-        name.click();
-        onView(withId(R.id.ConCat)).check(matches(isDisplayed()));
+        device.waitForIdle();
         onView(withId(R.id.accountBtn)).perform(click());
         onView(withId(R.id.profile_image)).check(matches(isDisplayed()));
         onView(withId(R.id.email_txt)).check(matches(isDisplayed()));
